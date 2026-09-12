@@ -93,15 +93,20 @@ struct VolvoField {
         self.status = status
     }
 
-    /// Decodes one `{ value, timestamp, unit, status }` object. Volvo sends
-    /// ISO-8601 with fractional seconds on some fields and without on others,
-    /// so both are tried rather than assuming.
+    /// Decodes one `{ value, updatedAt, unit, status }` object.
+    ///
+    /// The live API names the time `updatedAt`; `timestamp` is accepted too
+    /// because the published specification uses that, and a field whose time
+    /// silently reads nil is how a stale reading passes for a fresh one.
+    /// Volvo sends ISO-8601 with fractional seconds on some fields and
+    /// without on others, so both are tried rather than assuming.
     init?(_ raw: Any?) {
         guard let dict = raw as? [String: Any] else { return nil }
         self.value = dict["value"]
         self.unit = dict["unit"] as? String
         self.status = dict["status"] as? String
-        self.timestamp = (dict["timestamp"] as? String).flatMap(VolvoField.parseDate)
+        let when = (dict["updatedAt"] ?? dict["timestamp"]) as? String
+        self.timestamp = when.flatMap(VolvoField.parseDate)
     }
 
     private static let withFraction: ISO8601DateFormatter = {
@@ -188,7 +193,7 @@ struct VolvoVehicle {
 /// would have meant editing every one of them.
 enum VolvoStatus {
 
-    /// `chargingSystemStatus` → the app's status key.
+    /// `chargingStatus` → the app's status key.
     static func systemStatus(_ raw: String?) -> String {
         guard let raw else { return "UNSPECIFIED" }
         let key = raw.uppercased()
@@ -203,7 +208,7 @@ enum VolvoStatus {
         }
     }
 
-    /// `chargingConnectionStatus` → plugged in or not.
+    /// `chargerConnectionStatus` → plugged in or not.
     ///
     /// Returns nil for UNSPECIFIED rather than false: "we don't know" and
     /// "the cable is out" are different, and the widget shows a plug icon for
@@ -231,6 +236,17 @@ enum VolvoStatus {
         if key == "CONNECTED_AC" { return "AC" }
         if key == "CONNECTED_DC" { return "DC" }
         return nil
+    }
+
+    /// `chargingType` → "AC" / "DC", or nil when the car says NONE (which it
+    /// does whenever it isn't charging) or reports something unrecognised.
+    static func chargingType(_ raw: String?) -> String? {
+        guard let raw else { return nil }
+        switch raw.uppercased() {
+        case "AC": return "AC"
+        case "DC": return "DC"
+        default: return nil
+        }
     }
 
     /// True when the connector itself reports a fault, which is worth a

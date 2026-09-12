@@ -121,6 +121,94 @@ final class VolvoStatusTests: XCTestCase {
     }
 }
 
+/// The exact shapes a real Volvo EX30 returns, recorded from
+/// `energy/v2/vehicles/{vin}/state` on 2026-09-13. Four of these names differ
+/// from Volvo's published specification, which is how the menu bar spent its
+/// first live session showing "UNSPECIFIED" beside a perfectly good battery
+/// percentage. Pinned here so the next refactor can't quietly undo it.
+final class LiveEnergyShapeTests: XCTestCase {
+
+    private let live: [String: Any] = [
+        "batteryChargeLevel": ["status": "OK", "value": 77.0, "unit": "percentage",
+                               "updatedAt": "2026-09-12T21:53:55Z"],
+        "electricRange": ["status": "OK", "value": 274.0, "unit": "km",
+                          "updatedAt": "2026-09-12T21:53:55Z"],
+        "chargerConnectionStatus": ["status": "OK", "value": "DISCONNECTED",
+                                    "updatedAt": "2026-09-12T21:53:55Z"],
+        "chargingStatus": ["status": "OK", "value": "IDLE",
+                           "updatedAt": "2026-09-12T21:53:55Z"],
+        "chargingType": ["status": "OK", "value": "NONE",
+                         "updatedAt": "2026-09-12T21:53:55Z"],
+        "estimatedChargingTimeToTargetBatteryChargeLevel":
+            ["status": "OK", "value": 2, "unit": "minutes",
+             "updatedAt": "2026-09-12T21:53:55Z"],
+        // The EX30 serves neither of these.
+        "chargingCurrentLimit": ["status": "ERROR", "code": "PROPERTY_NOT_SUPPORTED"],
+        "chargingPower": ["status": "ERROR", "code": "PROPERTY_NOT_FOUND"]
+    ]
+
+    private func fields() -> [String: VolvoField] {
+        live.compactMapValues { VolvoField($0) }
+    }
+
+    /// The bug: the app read `chargingSystemStatus`, the car sends
+    /// `chargingStatus`, and a missing field became "UNSPECIFIED".
+    func testChargingStatusIsReadUnderTheNameTheCarUses() {
+        let status = fields()["chargingStatus"]?.stringValue
+        XCTAssertEqual(status, "IDLE")
+        XCTAssertEqual(VolvoStatus.systemStatus(status), "IDLE")
+        XCTAssertNotEqual(VolvoStatus.systemStatus(status), "UNSPECIFIED")
+    }
+
+    func testConnectionIsReadUnderTheNameTheCarUses() {
+        let connection = fields()["chargerConnectionStatus"]?.stringValue
+        XCTAssertEqual(connection, "DISCONNECTED")
+        XCTAssertEqual(VolvoStatus.isPluggedIn(connection), false)
+    }
+
+    /// Values arrive bare, without the CHARGING_SYSTEM_ / CONNECTION_STATUS_
+    /// prefixes the specification shows.
+    func testBareValuesTranslateAsWellAsPrefixedOnes() {
+        XCTAssertEqual(VolvoStatus.systemStatus("CHARGING"), "CHARGING")
+        XCTAssertEqual(VolvoStatus.systemStatus("CHARGING_SYSTEM_CHARGING"), "CHARGING")
+        XCTAssertEqual(VolvoStatus.isPluggedIn("CONNECTED_AC"), true)
+        XCTAssertEqual(VolvoStatus.isPluggedIn("CONNECTION_STATUS_CONNECTED_AC"), true)
+    }
+
+    /// `updatedAt`, not `timestamp` — a field whose time reads nil is how a
+    /// day-old reading passes for a live one.
+    func testTimestampIsReadFromUpdatedAt() {
+        XCTAssertNotNil(fields()["batteryChargeLevel"]?.timestamp)
+        // The documented spelling still works, for any car that uses it.
+        XCTAssertNotNil(VolvoField(["value": 1, "timestamp": "2026-09-12T21:53:55Z"])?.timestamp)
+    }
+
+    func testEstimatedTimeIsReadUnderItsLongName() {
+        XCTAssertEqual(fields()["estimatedChargingTimeToTargetBatteryChargeLevel"]?.intValue, 2)
+    }
+
+    /// A car that can't supply a field still sends it, with an ERROR status.
+    /// Reading the value anyway is how a parked car reports 0 kW as fact.
+    func testUnsupportedFieldsAreNotRead() {
+        XCTAssertNil(fields()["chargingPower"]?.intValue)
+        XCTAssertNil(fields()["chargingCurrentLimit"]?.intValue)
+    }
+
+    /// NONE means "not charging", not a kind of current.
+    func testChargingTypeNoneIsNil() {
+        XCTAssertNil(VolvoStatus.chargingType(fields()["chargingType"]?.stringValue))
+        XCTAssertEqual(VolvoStatus.chargingType("AC"), "AC")
+        XCTAssertEqual(VolvoStatus.chargingType("DC"), "DC")
+    }
+
+    func testTheWholeReadingLandsWhereTheMenuExpectsIt() {
+        let f = fields()
+        XCTAssertEqual(f["batteryChargeLevel"]?.doubleValue, 77)
+        XCTAssertEqual(f["electricRange"]?.intValue, 274)
+        XCTAssertEqual(VolvoStatus.systemStatus(f["chargingStatus"]?.stringValue), "IDLE")
+    }
+}
+
 final class VolvoVehicleTests: XCTestCase {
 
     func testBuildsTitleFromDescriptions() {

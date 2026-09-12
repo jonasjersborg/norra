@@ -10,10 +10,11 @@
 //    volvoid.eu.volvocars.com             OAuth2 + OIDC
 //
 //  Unlike the Polestar client this was forked from, nothing here is
-//  reverse-engineered: Volvo documents these, and the shapes below come from
-//  their published specification. The practical consequence is that this file
-//  is allowed to be boring. No HTML scraping, no login form to re-find when
-//  they redesign it.
+//  reverse-engineered: Volvo documents these. The documentation is not
+//  exact, though — four Energy v2 field names differ from the published
+//  specification, and the ones used below were read off a real EX30. Where
+//  they differ, both spellings are accepted. No HTML scraping, at least, and
+//  no login form to re-find when they redesign it.
 //
 //  What it costs instead is credentials. Volvo issues a client_id only after
 //  a manual app review, and every request also carries a per-application
@@ -369,8 +370,15 @@ final class VolvoAPI {
         let diagnostics = await diagnosticFields ?? [:]
         let warnings = await warningFields ?? [:]
 
-        let connection = energy["chargingConnectionStatus"]?.stringValue
-        let systemStatus = energy["chargingSystemStatus"]?.stringValue
+        // These names are what the API actually sends, which is not what the
+        // published specification documents — it calls them
+        // chargingConnectionStatus and chargingSystemStatus. Checked against a
+        // real EX30; the documented spellings are read as a fallback so a car
+        // or a future version that uses them still works.
+        let connection = energy["chargerConnectionStatus"]?.stringValue
+            ?? energy["chargingConnectionStatus"]?.stringValue
+        let systemStatus = energy["chargingStatus"]?.stringValue
+            ?? energy["chargingSystemStatus"]?.stringValue
 
         // Volvo reports charging power in watts on some models and kilowatts
         // on others, and says which in the field's own `unit`. Normalising to
@@ -392,7 +400,11 @@ final class VolvoAPI {
             chargingPowerWatts: powerWatts,
             chargingCurrentAmps: energy["chargingCurrent"]?.intValue,
             chargingVoltageVolts: energy["chargingVoltage"]?.intValue,
-            chargingType: VolvoStatus.currentKind(connection)
+            // The car names the current directly ("AC"/"DC"/"NONE"), which
+            // beats inferring it from the connector — a DC charger reports
+            // CONNECTED_DC only while it is actually delivering.
+            chargingType: energy["chargingType"]?.stringValue.flatMap(VolvoStatus.chargingType)
+                ?? VolvoStatus.currentKind(connection)
         )
 
         return CarData(
@@ -400,7 +412,9 @@ final class VolvoAPI {
             rangeKm: energy["electricRange"]?.intValue
                 ?? energy["distanceToEmptyBattery"]?.intValue ?? 0,
             chargingStatus: VolvoStatus.systemStatus(systemStatus),
-            estimatedChargingTimeToFullMinutes: energy["estimatedChargingTime"]?.intValue,
+            estimatedChargingTimeToFullMinutes:
+                energy["estimatedChargingTimeToTargetBatteryChargeLevel"]?.intValue
+                ?? energy["estimatedChargingTime"]?.intValue,
             modelName: vehicle?.modelName,
             modelYear: vehicle?.modelYear,
             registrationNo: nil,
