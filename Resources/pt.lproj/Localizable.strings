@@ -56,7 +56,6 @@
 "Charging problems" = "Problemas de carregamento";
 "Low battery" = "Bateria fraca";
 "Norra Settings" = "Definições do Norra";
-"Polestar password" = "Palavra-passe Polestar";
 "Vehicle VIN" = "VIN do veículo";
 "Email:" = "E-mail:";
 "Password:" = "Palavra-passe:";
@@ -66,7 +65,6 @@
 "Notify about:" = "Notificar sobre:";
 "Save" = "Guardar";
 "Cancel" = "Cancelar";
-"Couldn't save password to Keychain" = "Não foi possível guardar a palavra-passe no porta-chaves";
 "HTTP error: %@" = "Erro HTTP: %@";
 "Parse error: %@" = "Erro de análise: %@";
 "Session expired — signing in again" = "Sessão expirada — a iniciar sessão novamente";
@@ -92,19 +90,16 @@
 
 /* Widget */
 "Open Norra to sign in" = "Abra o Norra para iniciar sessão";
-"Battery, range and charging status for your Polestar." = "Bateria, autonomia e estado de carregamento do seu Polestar.";
+"Battery, range and charging status for your Volvo." = "Bateria, autonomia e estado de carregamento do seu Volvo.";
 
 /* Onboarding, settings panes, sign out */
 "Sign in" = "Iniciar sessão";
-"Sign in with the account you use in the Polestar app." = "Inicia sessão com a conta que usas na app Polestar.";
 "EMAIL" = "E-MAIL";
 "PASSWORD" = "PALAVRA-PASSE";
 "Sign In" = "Iniciar sessão";
 "Signing in…" = "A iniciar sessão…";
-"Enter the email and password for your Polestar account." = "Introduz o e-mail e a palavra-passe da tua conta Polestar.";
-"Polestar rejected that email and password." = "A Polestar recusou esse e-mail e essa palavra-passe.";
 "No cars on this account. You can enter a VIN manually in Settings." = "Não há carros nesta conta. Podes introduzir um VIN manualmente nas Definições.";
-"Stored in the macOS Keychain, sent only to Polestar. Norra has no server of its own." = "Guardada no porta-chaves do macOS e enviada apenas para a Polestar. O Norra não tem servidor próprio.";
+"Stored in the macOS Keychain, sent only to Volvo. Norra has no server of its own." = "Guardada no porta-chaves do macOS e enviada apenas para a Volvo. O Norra não tem servidor próprio.";
 "Choose your car" = "Escolhe o teu carro";
 "One car on this account." = "Um carro nesta conta.";
 "%d cars on this account. You can switch any time from the menu." = "%d carros nesta conta. Podes trocar a qualquer momento no menu.";
@@ -114,8 +109,6 @@
 "No Dock icon, no window. Your battery sits in the menu bar — click it for range, charging and the doors." = "Sem ícone na Dock, sem janela. A bateria fica na barra de menus — clica para autonomia, carregamento e portas.";
 "SHOW IN THE MENU BAR" = "MOSTRAR NA BARRA DE MENUS";
 "Open Norra at login" = "Abrir o Norra ao iniciar sessão";
-"Email" = "E-mail";
-"Password" = "Palavra-passe";
 "About" = "Acerca de";
 "Signed in" = "Sessão iniciada";
 "Not signed in" = "Sessão não iniciada";

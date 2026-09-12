@@ -495,7 +495,7 @@ struct NorraCarWidget: Widget {
             NorraWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Norra")
-        .description(L("Battery, range and charging status for your Polestar."))
+        .description(L("Battery, range and charging status for your Volvo."))
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }

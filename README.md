@@ -1,63 +1,89 @@
 # Norra
 
-Your Polestar, in the menu bar.
+Your Volvo, in the menu bar.
 
-Norra is a tiny native macOS app that shows your Polestar's battery, range,
-and charging status in the menu bar, and on the desktop as a widget. Pure
-AppKit — no Electron, no background services; the widget is SwiftUI because
-WidgetKit leaves no choice. It talks only to Polestar's official API.
+Norra is a tiny native macOS app that shows your Volvo's battery, range, and
+charging status in the menu bar, and on the desktop as a widget. Pure AppKit —
+no Electron, no background services; the widget is SwiftUI because WidgetKit
+leaves no choice. It talks only to Volvo's official developer APIs.
 
-Sibling project of [Teslaris](https://github.com/simonbusborg/teslaris)
-(the same app for Tesla).
+Forked from [Polaris](https://github.com/simonbusborg/polaris) by
+[@simonbusborg](https://github.com/simonbusborg) — the same app for Polestar,
+itself grown from his [Teslaris](https://github.com/simonbusborg/teslaris).
+Almost everything good about the way this app is built is his; the Volvo API
+layer is the part that is new. See [Credits](#credits).
 
-[![Downloads](https://img.shields.io/github/downloads/simonbusborg/norra/total?label=downloads&color=blue)](https://github.com/simonbusborg/norra/releases)
-
-**[Download Norra.dmg](https://github.com/simonbusborg/norra/releases/latest/download/Norra.dmg)** · [All releases](https://github.com/simonbusborg/norra/releases) · [Website](https://simonbusborg.github.io/norra/)
+Built and tested against a Volvo EX30.
 
 ## Features
 
 - Battery %, range (km/mi), charging status and time-to-full — refreshed every
   5 minutes, or every minute while charging
-- Charger connection, live charging power and whether it's AC or DC, read from
-  the gRPC battery service the GraphQL API doesn't cover
+- Charger connection, live charging power and whether it's AC or DC
 - Odometer, service interval and fluid warnings
+- Lock, unlock, honk and flash, if you grant those scopes at sign-in — off by
+  default, and unlock asks before it acts
 - Notifications when charging starts, completes, or the charger reports a fault
 - A desktop widget in three sizes: small for battery, range and state, medium
-  for those beside the studio render of your actual car, large for everything
-  the menu shows about it. It reads what the app last fetched rather than
-  polling on its own, so adding one doesn't add a request to your car
+  for those beside your car, large for everything the menu shows. It reads what
+  the app last fetched rather than polling on its own, so adding one doesn't add
+  a request to your car
 - Choose what the menu bar shows
 - Follows the system language in twelve languages: English, Danish, Swedish,
   Norwegian, German, Spanish, Italian, Dutch, Finnish, French, Portuguese and
   Polish. Adding one is a single `Resources/<lang>.lproj/Localizable.strings`
   file; a test fails the build if any language falls behind the others
-- Password and session stored in the macOS Keychain — never in plaintext, and
-  the session is resumed on launch instead of logging in again
-- OAuth2/OIDC with PKCE against Polestar's official endpoints; no third parties, no analytics, no tracking
-- A once-a-day update check against GitHub releases (a menu item appears when
-  there's a new version — nothing is downloaded automatically)
+- Sign-in happens in your browser, on Volvo's own domain. Norra never sees your
+  password, and none is stored — the refresh token in the macOS Keychain is the
+  whole session, and it is resumed on launch
+- OAuth2/OIDC with PKCE against Volvo ID; no third parties, no analytics, no
+  tracking
 - Launch at login (optional)
 - A single small binary
 
-See [ROADMAP.md](ROADMAP.md) for what's planned, what's shipped, and what
-deliberately isn't happening.
+See [ROADMAP.md](ROADMAP.md) for what's planned and what deliberately isn't.
+
+## Getting Volvo credentials
+
+Unlike Polestar's, Volvo's API is official and documented — which means it is
+also credentialed. There is no key to ship inside the app, so you bring your
+own. It is free for non-commercial use.
+
+1. Register at [developer.volvocars.com](https://developer.volvocars.com/account/)
+   and create an application. The **VCC API key** is issued immediately.
+2. Set the application's redirect URI to `http://localhost:9631/callback`.
+   Norra listens there during sign-in and nowhere else.
+3. Publishing the application gets you a **client ID and secret**. Volvo
+   reviews this by hand and it takes 14–21 days.
+4. Copy `Resources/templates/Secrets.example.swift` to
+   `Sources/Norra/Secrets.swift` and fill it in. That file is gitignored.
+
+Credentials can also come from the environment (`VOLVO_VCC_API_KEY`,
+`VOLVO_CLIENT_ID`, `VOLVO_CLIENT_SECRET`) or be typed into Settings; see
+[VolvoCredentials.swift](Sources/Norra/VolvoCredentials.swift) for the order
+they are read in.
+
+Two limits worth knowing before you start: a published application is capped at
+10,000 calls a day (Norra's 5-minute poll uses about 290), and only cars in
+Europe, the Middle East and Africa are reachable once published.
 
 ## Install
 
+Norra isn't packaged for distribution — it needs credentials only you can get
+(see above), so build it yourself:
+
 ```bash
-brew install --cask simonbusborg/norra/norra
+git clone <your fork>
+cd norra
+cp Resources/templates/Secrets.example.swift Sources/Norra/Secrets.swift
+# fill in your Volvo application key
+make app
+open Norra.app
 ```
 
-Or download `Norra.dmg` from the [latest release](https://github.com/simonbusborg/norra/releases/latest),
-open it, and drag Norra to Applications (a `Norra.zip` is also
-attached for scripted installs). However you install it, the app keeps itself
-up to date through Sparkle. Releases are built by GitHub Actions,
-signed with a Developer ID and notarized by Apple, so it opens like any
-other app — no security warning to click past. The build is universal, so
-it runs on both Apple silicon and Intel Macs.
-
-Then click the menu bar icon → Settings… → enter your Polestar email, password,
-and VIN.
+Then click the menu bar icon → Settings… → enter your VIN → **Sign In with
+Volvo ID**. Your browser opens Volvo's consent page; approving it sends you
+back to Norra and the menu fills in.
 
 ## Build from source
 
@@ -142,21 +168,21 @@ release is published and neither can fail it.
 Off by default, and none of them alter what the API returns:
 
 ```bash
-defaults write com.weareheavy.norra debug_grpc_fields -bool YES
-defaults delete com.weareheavy.norra debug_grpc_fields   # turn it off again
+defaults write com.weareheavy.norra debug_logging -bool YES
+defaults delete com.weareheavy.norra debug_logging   # turn it off again
 ```
 
 | Key | Effect |
 | --- | --- |
-| `debug_grpc_fields` | Logs which fields the battery message actually carries (`log show --info --last 10m \| grep "battery fields"`). Field numbers and numeric values only — no VIN, no raw payload |
+| `debug_logging` | Logs each Volvo request's outcome and the capabilities the car reports (`log show --info --last 10m \| grep VolvoAPI`). Status codes and field names only — no tokens, no VIN |
 | `debug_drive` | Logs the numbers behind each "in use" verdict — odometer in metres, the distance since the last reading, and how old both odometer reports are (`log show --info --last 10m \| grep "drive:"`). The one way to see what a parked car's odometer stream actually does |
-| `debug_pno34` | Shows the car's raw `pno34` product code as a copyable menu row. This is how a code gets read off a real car to fill in `PNO34.variantsByPrefix` |
 | `debug_charging_type` | A string (`AC`, `DC`, `WIRELESS`) that renders the charging rows on a parked car. It invents its numbers in the menu layer, so it demonstrates the layout and nothing about the wire format — and it hides the real Power row while set |
 | `debug_demo_car` | Adds a pretend second car mirroring the real one, so the multi-car switcher can be exercised on a single-car account |
 
-Not every field the battery service documents is actually sent. A 2026
-Polestar 4 reports no average consumption at all, which is why there's no row
-for it; `debug_grpc_fields` is how that kind of question gets settled.
+Not every field the Energy API documents is served by every car — the EX30
+reports no target charge level or charging current limit, for instance. Norra
+asks the capabilities endpoint at sign-in rather than assuming, and
+`debug_logging` prints what came back.
 
 ## Support
 
@@ -167,21 +193,34 @@ you're welcome to chip in — it's never expected.
 
 ## Credits
 
-The Polestar auth/API flow was originally studied from
-[Michiel1992/voltstarP](https://github.com/Michiel1992/voltstarP) and updated to
-Polestar's current login flow and GraphQL schema (with reference to
-[pypolestar](https://github.com/pypolestar/pypolestar)). Norra is a from-scratch
-AppKit implementation.
+Norra is a fork of **[Polaris](https://github.com/simonbusborg/polaris)** by
+[Simon Busborg](https://github.com/simonbusborg), the same app for Polestar,
+which he in turn grew out of his
+[Teslaris](https://github.com/simonbusborg/teslaris) for Tesla. The menu bar,
+the widget, the notification logic, the hand-assembled app bundle, the release
+pipeline and the twelve translations are all his work, and the fork kept them
+almost untouched — the first commit in this repository is his code verbatim, so
+`git log` shows exactly what changed.
+
+What is new here is the Volvo layer: [VolvoAPI](Sources/Norra/VolvoAPI.swift),
+[VolvoModels](Sources/Norra/VolvoModels.swift) and the browser
+[CallbackListener](Sources/Norra/CallbackListener.swift) that Volvo's OAuth flow
+needs and Polestar's didn't.
+
+Volvo's API shapes were read from their published
+[developer portal](https://developer.volvocars.com/) and their official
+[API samples](https://github.com/volvo-cars/developer-portal-api-samples).
 
 ## Disclaimer
 
-Not affiliated with Polestar. Use at your own risk.
+Not affiliated with Volvo. Use at your own risk.
 
 ## License
 
 [MIT](LICENSE)
 
-The MIT license covers the source code. It does not grant rights to the
-Norra name or the app icon — please pick your own if you ship a fork.
-"Polestar" is a trademark of Polestar Performance AB, which is not
-affiliated with this project.
+The MIT license covers the source code, and the copyright notice covers both
+Simon's original work and this fork's changes. It does not grant rights to the
+Norra name or the app icon — please pick your own if you ship a fork of this
+one. "Volvo" is a trademark of Volvo Car Corporation, which is not affiliated
+with this project.

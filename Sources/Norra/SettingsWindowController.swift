@@ -372,7 +372,7 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         version.textColor = .secondaryLabelColor
 
         let blurb = NSTextField(wrappingLabelWithString:
-            L("Battery, range and charging status for your Polestar."))
+            L("Battery, range and charging status for your Volvo."))
         blurb.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
         blurb.textColor = .secondaryLabelColor
 

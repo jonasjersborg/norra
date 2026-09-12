@@ -22,7 +22,7 @@ commit reaches `main`, which closes the issue a release too early and skips
 the comment that was the whole point. Reference the issue by number instead.
 
 Everything public is written in English — issues, comments, releases, this
-file. The people asking are from all over Polestar's markets, and a reply in
+file. The people asking are from all over Volvo's markets, and a reply in
 Danish is a reply only Simon can read.
 
 The comment is the point. A silently closed issue tells the person who asked

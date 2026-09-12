@@ -74,9 +74,9 @@ permanently.
 ## Reporting bugs
 
 Include your macOS version, the Norra version from the menu, and what the
-car was doing at the time — parked, charging, driving. Polestar's API behaves
+car was doing at the time — parked, charging, driving. Volvo's API behaves
 differently in each, and "it showed the wrong range" is usually a question
 about which of those three it was.
 
-Never paste tokens, VINs or your Polestar password into an issue. A VIN
+Never paste tokens, VINs or your Volvo password into an issue. A VIN
 identifies a specific car and its owner.

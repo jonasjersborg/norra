@@ -434,7 +434,7 @@ final class OnboardingWindowController: NSWindowController, NSWindowDelegate {
                                               accessibilityDescription: nil) ?? NSImage())
         icon.contentTintColor = .secondaryLabelColor
         let l = NSTextField(wrappingLabelWithString:
-            L("Stored in the macOS Keychain, sent only to Polestar. Norra has no server of its own."))
+            L("Stored in the macOS Keychain, sent only to Volvo. Norra has no server of its own."))
         l.font = .systemFont(ofSize: 11)
         l.textColor = .secondaryLabelColor
         let row = NSStackView(views: [icon, l])
