@@ -33,9 +33,13 @@ final class VolvoAPI {
     private let connectedPath = "/connected-vehicle/v2/vehicles"
     private let energyPath = "/energy/v2/vehicles"
 
-    // Volvo ID is a standard OIDC provider, but the discovery document is not
-    // always reachable from a sandboxed app, so the two endpoints that matter
-    // are named directly. They are stable and documented.
+    // Volvo ID is a standard OIDC provider and does serve a discovery
+    // document at /.well-known/openid-configuration. These two endpoints are
+    // named directly anyway: they are the only ones needed, they are
+    // documented and stable, and fetching discovery first would spend a
+    // request on every launch to learn what is written here. Both were
+    // checked against the live document — if sign-in ever starts failing for
+    // everyone at once, that is the first thing to re-read.
     private let authorizeURL = URL(string: "https://volvoid.eu.volvocars.com/as/authorization.oauth2")!
     private let tokenURL = URL(string: "https://volvoid.eu.volvocars.com/as/token.oauth2")!
 
