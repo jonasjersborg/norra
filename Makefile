@@ -3,15 +3,27 @@ APP     = Norra.app
 BINARY  = .build/apple/Products/Release/Norra
 DMG     = Norra.dmg
 
-# Code-signing identity. Default "-" is ad-hoc (local builds); CI passes a
-# "Developer ID Application: …" identity for notarized releases.
-IDENTITY ?= -
+# Code-signing identity. CI passes a "Developer ID Application: …" identity
+# for notarized releases; locally we look for one in the keychain and fall
+# back to ad-hoc ("-") when there is none.
+#
+# Preferring a real identity locally is not about distribution — it is about
+# the Keychain. An ad-hoc signature differs on every build, so macOS treats
+# each rebuild as a different application and prompts for the login keychain
+# password again, every time. A stable Developer ID signature is recognised
+# across rebuilds and the prompt stops.
+DEV_ID := $(shell security find-identity -v -p codesigning 2>/dev/null | \
+                  sed -n 's/.*"\(Developer ID Application: .*\)"/\1/p' | head -1)
+IDENTITY ?= $(if $(DEV_ID),$(DEV_ID),-)
 
 # Team ID, used only to prefix the App Group identifier — on macOS a group
 # has to be <TEAM>.group.…, unlike iOS. It's a secret in CI. A build without
 # it still assembles and signs; it simply carries no group, and the widget
 # says so on its face instead of resolving something plausible and wrong.
-TEAM_ID ?=
+# Derived from the signing identity when it names one, so a local signed
+# build gets the same App Group a release does rather than the fallback path.
+DEV_TEAM := $(shell echo "$(DEV_ID)" | sed -n 's/.*(\([A-Z0-9]\{10\}\))$$/\1/p')
+TEAM_ID ?= $(DEV_TEAM)
 APP_GROUP = $(if $(TEAM_ID),$(TEAM_ID).group.com.weareheavy.norra,)
 
 # A Developer ID build that claims an App Group needs that entitlement
