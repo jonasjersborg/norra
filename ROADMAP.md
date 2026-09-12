@@ -32,7 +32,7 @@ comment describing where it now stands.
 
 ## Next
 
-- **[A better "in use" signal](https://github.com/simonbusborg/norra/issues/3)** — the API's charging status reads `IDLE`
+- **[A better "in use" signal](https://github.com/jonasjersborg/norra/issues/3)** — the API's charging status reads `IDLE`
   whether the car is parked or on the motorway, so driving is inferred from
   the odometer moving. v2.8.1 made that inference sharper — metres rather
   than whole kilometres, and readings too far apart to describe the present
@@ -45,11 +45,11 @@ comment describing where it now stands.
 These depend on what the API actually exposes, which is not something that
 can be promised before someone has tried it.
 
-- **[Charging history](https://github.com/simonbusborg/norra/issues/5)** — a log of recent sessions rather than only what's
+- **[Charging history](https://github.com/jonasjersborg/norra/issues/5)** — a log of recent sessions rather than only what's
   happening right now.
-- **[Climate / preconditioning status](https://github.com/simonbusborg/norra/issues/6)** — whether the car reports it at all is
+- **[Climate / preconditioning status](https://github.com/jonasjersborg/norra/issues/6)** — whether the car reports it at all is
   still an open question.
-- **[Multiple accounts](https://github.com/simonbusborg/norra/issues/7)** — distinct from multiple cars, which already works.
+- **[Multiple accounts](https://github.com/jonasjersborg/norra/issues/7)** — distinct from multiple cars, which already works.
 
 ## Shipped
 
@@ -100,7 +100,7 @@ can be promised before someone has tried it.
   committed by the release workflow. The v2.6.0 entry was the last one made
   by hand.
 
-- **Homebrew cask** (v2.6.0) — `brew install --cask simonbusborg/norra/norra`,
+- **Homebrew cask** (v2.6.0) — `brew install --cask jonasjersborg/norra/norra`,
   kept current by the release workflow.
 - **In-app updates** (v2.6.0) — "Check for Updates…" in the menu, plus
   automatic checking and installing, via Sparkle.

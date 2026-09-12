@@ -85,8 +85,8 @@ if curated:
 else:
     body = "\n".join(f"      <li>{html.escape(i)}</li>" for i in items) or \
            "      <li>Maintenance and small fixes.</li>"
-compare = (f"https://github.com/simonbusborg/norra/compare/{previous}...{tag}"
-           if previous else f"https://github.com/simonbusborg/norra/releases/tag/{tag}")
+compare = (f"https://github.com/jonasjersborg/norra/compare/{previous}...{tag}"
+           if previous else f"https://github.com/jonasjersborg/norra/releases/tag/{tag}")
 
 page = f"""<!DOCTYPE html>
 <html lang="en">

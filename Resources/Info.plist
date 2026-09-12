@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>SUFeedURL</key>
-	<string>https://simonbusborg.github.io/norra/appcast.xml</string>
+	<string>https://jonasjersborg.github.io/norra/appcast.xml</string>
 	<key>SUPublicEDKey</key>
-	<string>D0Pr3zqX74d8fY5dTAuyy53V8Wig1Rlu7fH1ecOmIrE=</string>
+	<string>GSPIeW4QxIQn/hfIB0YZcDQvWMYadoEw4pdZTzXPngo=</string>
 	<key>SUEnableInstallerLauncherService</key>
 	<false/>
 	<key>CFBundleDevelopmentRegion</key>

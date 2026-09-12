@@ -73,7 +73,7 @@ Norra isn't packaged for distribution — it needs credentials only you can get
 (see above), so build it yourself:
 
 ```bash
-git clone <your fork>
+git clone https://github.com/jonasjersborg/norra
 cd norra
 cp Resources/templates/Secrets.example.swift Sources/Norra/Secrets.swift
 # fill in your Volvo application key
@@ -90,7 +90,7 @@ back to Norra and the menu fills in.
 Requires macOS 13+ and the Xcode Command Line Tools (`xcode-select --install`).
 
 ```bash
-git clone https://github.com/simonbusborg/norra
+git clone https://github.com/jonasjersborg/norra
 cd norra
 make app
 open Norra.app
@@ -159,7 +159,7 @@ Releases are signed and notarized when these repository secrets are configured
 
 Two more secrets are optional and independent of signing: `SPARKLE_PRIVATE_KEY`
 signs the build for the update feed, and `HOMEBREW_TAP_TOKEN` — a token with
-`contents: write` on [simonbusborg/homebrew-norra](https://github.com/simonbusborg/homebrew-norra) —
+`contents: write` on [jonasjersborg/homebrew-norra](https://github.com/jonasjersborg/homebrew-norra) —
 lets the workflow point the cask at the new DMG. Both steps run after the
 release is published and neither can fail it.
 
