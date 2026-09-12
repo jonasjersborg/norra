@@ -1,0 +1,133 @@
+/* Polaris — en. Keys are the English source text. */
+
+"Variant" = "Variant";
+"Product Code" = "Product Code";
+"Plate" = "Plate";
+"VIN" = "VIN";
+"Switch Car" = "Switch Car";
+"Battery" = "Battery";
+"Range" = "Range";
+"Status" = "Status";
+"In use" = "In use";
+"Charger" = "Charger";
+"Connected" = "Connected";
+"Disconnected" = "Disconnected";
+"Fault" = "Fault";
+"Power" = "Power";
+"Full in" = "Full in";
+"Odometer" = "Odometer";
+"in %d day" = "in %d day";
+"in %d days" = "in %d days";
+"Service" = "Service";
+"Service warning" = "Service warning";
+"Updated" = "Updated";
+"No data yet" = "No data yet";
+"Refresh Now" = "Refresh Now";
+"Settings…" = "Settings…";
+"Quit Polaris" = "Quit Polaris";
+"Click to copy" = "Click to copy";
+"Charging" = "Charging";
+"Idle" = "Idle";
+"Done" = "Done";
+"Discharging" = "Discharging";
+"Error" = "Error";
+"Scheduled" = "Scheduled";
+"Smart charging" = "Smart charging";
+"full in %@" = "full in %@";
+"Charging started" = "Charging started";
+"Charging complete" = "Charging complete";
+"%.0f%% · %@ range" = "%.0f%% · %@ range";
+"Charging problem" = "Charging problem";
+"%.0f%% left — time to plug in" = "%.0f%% left — time to plug in";
+"Charger reported an error at %.0f%%" = "Charger reported an error at %.0f%%";
+"Edit" = "Edit";
+"Undo" = "Undo";
+"Redo" = "Redo";
+"Cut" = "Cut";
+"Copy" = "Copy";
+"Paste" = "Paste";
+"Select All" = "Select All";
+"Not configured" = "Not configured";
+"Battery Percentage" = "Battery Percentage";
+"Charge Time" = "Charge Time";
+"Kilometers (km)" = "Kilometers (km)";
+"Miles (mi)" = "Miles (mi)";
+"Launch at login" = "Launch at login";
+"Charging problems" = "Charging problems";
+"Low battery" = "Low battery";
+"Polaris Settings" = "Polaris Settings";
+"Polestar password" = "Polestar password";
+"Vehicle VIN" = "Vehicle VIN";
+"Email:" = "Email:";
+"Password:" = "Password:";
+"VIN:" = "VIN:";
+"Show in bar:" = "Show in bar:";
+"Distances:" = "Distances:";
+"Notify about:" = "Notify about:";
+"Save" = "Save";
+"Cancel" = "Cancel";
+"Couldn't save password to Keychain" = "Couldn't save password to Keychain";
+"HTTP error: %@" = "HTTP error: %@";
+"Parse error: %@" = "Parse error: %@";
+"Authentication failed — check email/password" = "Authentication failed — check email/password";
+"Session expired — signing in again" = "Session expired — signing in again";
+"Not configured — open Settings" = "Not configured — open Settings";
+"Check for Updates…" = "Check for Updates…";
+"Check automatically" = "Check automatically";
+"Download and install automatically" = "Download and install automatically";
+"Updates:" = "Updates:";
+"Add Car…" = "Add Car…";
+"Remove Car" = "Remove Car";
+"Sign out and forget this car?" = "Sign out and forget this car?";
+"Polaris will forget the login for %@." = "Polaris will forget the login for %@.";
+
+/* Settings groups */
+"Account" = "Account";
+"Menu Bar" = "Menu Bar";
+"General" = "General";
+"Notifications" = "Notifications";
+"Updates" = "Updates";
+
+/* Widget */
+"Open Polaris to sign in" = "Open Polaris to sign in";
+"Battery, range and charging status for your Polestar." = "Battery, range and charging status for your Polestar.";
+
+/* Onboarding */
+"Sign in" = "Sign in";
+"Sign in with the account you use in the Polestar app." = "Sign in with the account you use in the Polestar app.";
+"EMAIL" = "EMAIL";
+"PASSWORD" = "PASSWORD";
+"Sign In" = "Sign In";
+"Signing in…" = "Signing in…";
+"Enter the email and password for your Polestar account." = "Enter the email and password for your Polestar account.";
+"Polestar rejected that email and password." = "Polestar rejected that email and password.";
+"No cars on this account. You can enter a VIN manually in Settings." = "No cars on this account. You can enter a VIN manually in Settings.";
+"Stored in the macOS Keychain, sent only to Polestar. Polaris has no server of its own." = "Stored in the macOS Keychain, sent only to Polestar. Polaris has no server of its own.";
+"Choose your car" = "Choose your car";
+"One car on this account." = "One car on this account.";
+"%d cars on this account. You can switch any time from the menu." = "%d cars on this account. You can switch any time from the menu.";
+"Enter VIN Manually…" = "Enter VIN Manually…";
+"Continue" = "Continue";
+"Lives in the menu bar" = "Lives in the menu bar";
+"No Dock icon, no window. Your battery sits in the menu bar — click it for range, charging and the doors." = "No Dock icon, no window. Your battery sits in the menu bar — click it for range, charging and the doors.";
+"SHOW IN THE MENU BAR" = "SHOW IN THE MENU BAR";
+"Open Polaris at login" = "Open Polaris at login";
+"Email" = "Email";
+"Password" = "Password";
+
+/* Settings panes */
+"About" = "About";
+"Signed in" = "Signed in";
+"Not signed in" = "Not signed in";
+"Signed in · updated %@" = "Signed in · updated %@";
+"Signed in · %@ · updated %@" = "Signed in · %@ · updated %@";
+"Distances" = "Distances";
+"Show in the menu bar" = "Show in the menu bar";
+"Sign Out" = "Sign Out";
+"Sign out of Polaris?" = "Sign out of Polaris?";
+"Polaris will forget the login for %@ and stop reading your car." = "Polaris will forget the login for %@ and stop reading your car.";
+
+/* Menu bar pane: refresh pace */
+"Refresh while parked" = "Refresh while parked";
+"Every minute" = "Every minute";
+"Every %d minutes" = "Every %d minutes";

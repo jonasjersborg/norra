@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SUFeedURL</key>
+	<string>https://simonbusborg.github.io/polaris/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>D0Pr3zqX74d8fY5dTAuyy53V8Wig1Rlu7fH1ecOmIrE=</string>
+	<key>SUEnableInstallerLauncherService</key>
+	<false/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.weareheavy.polaris</string>
+	<key>CFBundleName</key>
+	<string>Polaris</string>
+	<key>CFBundleDisplayName</key>
+	<string>Polaris</string>
+	<key>CFBundleExecutable</key>
+	<string>Polaris</string>
+	<key>CFBundleIconFile</key>
+	<string>Polaris</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.10.0</string>
+	<key>CFBundleVersion</key>
+	<string>25</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	<key>LSUIElement</key>
+	<true/>
+	<!-- Substituted by the Makefile from TEAM_ID, and empty in a build that
+	     has no Team ID to prefix it with. The app and the widget read the
+	     same key so neither hard-codes a Team ID. -->
+	<key>PolarisAppGroup</key>
+	<string>__APP_GROUP__</string>
+	<!-- Clicking the widget opens polaris://open, which drops the menu bar
+	     menu down rather than bringing up a window this app doesn't have. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.weareheavy.polaris</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>polaris</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSHumanReadableCopyright</key>
+	<string>© Simon Busborg. Not affiliated with Polestar.</string>
+</dict>
+</plist>

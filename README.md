@@ -1,0 +1,187 @@
+# Polaris
+
+Your Polestar, in the menu bar.
+
+Polaris is a tiny native macOS app that shows your Polestar's battery, range,
+and charging status in the menu bar, and on the desktop as a widget. Pure
+AppKit — no Electron, no background services; the widget is SwiftUI because
+WidgetKit leaves no choice. It talks only to Polestar's official API.
+
+Sibling project of [Teslaris](https://github.com/simonbusborg/teslaris)
+(the same app for Tesla).
+
+[![Downloads](https://img.shields.io/github/downloads/simonbusborg/polaris/total?label=downloads&color=blue)](https://github.com/simonbusborg/polaris/releases)
+
+**[Download Polaris.dmg](https://github.com/simonbusborg/polaris/releases/latest/download/Polaris.dmg)** · [All releases](https://github.com/simonbusborg/polaris/releases) · [Website](https://simonbusborg.github.io/polaris/)
+
+## Features
+
+- Battery %, range (km/mi), charging status and time-to-full — refreshed every
+  5 minutes, or every minute while charging
+- Charger connection, live charging power and whether it's AC or DC, read from
+  the gRPC battery service the GraphQL API doesn't cover
+- Odometer, service interval and fluid warnings
+- Notifications when charging starts, completes, or the charger reports a fault
+- A desktop widget in three sizes: small for battery, range and state, medium
+  for those beside the studio render of your actual car, large for everything
+  the menu shows about it. It reads what the app last fetched rather than
+  polling on its own, so adding one doesn't add a request to your car
+- Choose what the menu bar shows
+- Follows the system language in twelve languages: English, Danish, Swedish,
+  Norwegian, German, Spanish, Italian, Dutch, Finnish, French, Portuguese and
+  Polish. Adding one is a single `Resources/<lang>.lproj/Localizable.strings`
+  file; a test fails the build if any language falls behind the others
+- Password and session stored in the macOS Keychain — never in plaintext, and
+  the session is resumed on launch instead of logging in again
+- OAuth2/OIDC with PKCE against Polestar's official endpoints; no third parties, no analytics, no tracking
+- A once-a-day update check against GitHub releases (a menu item appears when
+  there's a new version — nothing is downloaded automatically)
+- Launch at login (optional)
+- A single small binary
+
+See [ROADMAP.md](ROADMAP.md) for what's planned, what's shipped, and what
+deliberately isn't happening.
+
+## Install
+
+```bash
+brew install --cask simonbusborg/polaris/polaris
+```
+
+Or download `Polaris.dmg` from the [latest release](https://github.com/simonbusborg/polaris/releases/latest),
+open it, and drag Polaris to Applications (a `Polaris.zip` is also
+attached for scripted installs). However you install it, the app keeps itself
+up to date through Sparkle. Releases are built by GitHub Actions,
+signed with a Developer ID and notarized by Apple, so it opens like any
+other app — no security warning to click past. The build is universal, so
+it runs on both Apple silicon and Intel Macs.
+
+Then click the menu bar icon → Settings… → enter your Polestar email, password,
+and VIN.
+
+## Build from source
+
+Requires macOS 13+ and the Xcode Command Line Tools (`xcode-select --install`).
+
+```bash
+git clone https://github.com/simonbusborg/polaris
+cd polaris
+make app
+open Polaris.app
+```
+
+`make run` builds and runs the bare binary for quick iteration (launch-at-login,
+notifications and the widget are unavailable in that mode). `make test` (or
+`swift test`) runs the test suite.
+
+`make install` replaces the copy in `/Applications`, restarts the app and the
+widget host, and reopens it — the loop for working on the widget, and less
+error-prone than copying the bundle by hand.
+
+The widget reads what the app writes, and how they share it depends on how the
+build is signed:
+
+- **A release** shares an App Group container. On macOS the identifier carries
+  the Team ID prefix, so pass `TEAM_ID=ABCDE12345` to reproduce that locally
+  (the release workflow passes it from `NOTARY_TEAM_ID`). No provisioning
+  profile is needed and the group doesn't have to be registered in the
+  developer portal — a Developer ID build carrying the entitlement notarizes
+  and the container resolves at runtime.
+- **A plain `make app`** shares `~/Library/Application Support/Polaris`
+  instead, and the widget is signed with a sandbox exception for that folder.
+  This isn't a shortcut: macOS validates an app group against the team in the
+  signature, and an ad-hoc build has none, so it would be handed a container
+  URL and then denied every read. The sandbox itself stays either way —
+  WidgetKit won't register an unsandboxed extension, and a widget that isn't
+  registered never appears in the gallery at all.
+
+## Releasing
+
+One command from a clean working tree — it bumps `Info.plist`, commits, tags
+and pushes, and GitHub Actions builds the app and attaches `Polaris.dmg` and
+`Polaris.zip` to the release:
+
+```bash
+make release VERSION=1.0.0
+```
+
+Don't tag by hand. The release workflow checks the tag against
+`CFBundleShortVersionString` and fails if they disagree, because the update
+checker compares the two — a release whose plist says something else would nag
+every user forever. `make release` bumps the plist as part of the same commit,
+which is what keeps them in step.
+
+Pushing a `preview-*` tag builds the same thing without publishing anything:
+signed, notarized and attached to the workflow run as an artifact. It's the
+only way to test the widget's App Group, which macOS honours for a properly
+signed build and denies for an ad-hoc one.
+
+```bash
+git tag preview-widget-1 && git push origin preview-widget-1
+```
+
+Releases are signed and notarized when these repository secrets are configured
+(without them the workflow falls back to an ad-hoc-signed build):
+
+| Secret | Value |
+| --- | --- |
+| `MACOS_CERT_P12` | Base64 of a "Developer ID Application" certificate + private key (`.p12`) |
+| `MACOS_CERT_PASSWORD` | Password of that `.p12` |
+| `NOTARY_APPLE_ID` | Apple ID email used for notarization |
+| `NOTARY_TEAM_ID` | 10-character Apple Developer Team ID |
+| `NOTARY_APP_PASSWORD` | App-specific password for that Apple ID |
+
+Two more secrets are optional and independent of signing: `SPARKLE_PRIVATE_KEY`
+signs the build for the update feed, and `HOMEBREW_TAP_TOKEN` — a token with
+`contents: write` on [simonbusborg/homebrew-polaris](https://github.com/simonbusborg/homebrew-polaris) —
+lets the workflow point the cask at the new DMG. Both steps run after the
+release is published and neither can fail it.
+
+## Debug flags
+
+Off by default, and none of them alter what the API returns:
+
+```bash
+defaults write com.weareheavy.polaris debug_grpc_fields -bool YES
+defaults delete com.weareheavy.polaris debug_grpc_fields   # turn it off again
+```
+
+| Key | Effect |
+| --- | --- |
+| `debug_grpc_fields` | Logs which fields the battery message actually carries (`log show --info --last 10m \| grep "battery fields"`). Field numbers and numeric values only — no VIN, no raw payload |
+| `debug_drive` | Logs the numbers behind each "in use" verdict — odometer in metres, the distance since the last reading, and how old both odometer reports are (`log show --info --last 10m \| grep "drive:"`). The one way to see what a parked car's odometer stream actually does |
+| `debug_pno34` | Shows the car's raw `pno34` product code as a copyable menu row. This is how a code gets read off a real car to fill in `PNO34.variantsByPrefix` |
+| `debug_charging_type` | A string (`AC`, `DC`, `WIRELESS`) that renders the charging rows on a parked car. It invents its numbers in the menu layer, so it demonstrates the layout and nothing about the wire format — and it hides the real Power row while set |
+| `debug_demo_car` | Adds a pretend second car mirroring the real one, so the multi-car switcher can be exercised on a single-car account |
+
+Not every field the battery service documents is actually sent. A 2026
+Polestar 4 reports no average consumption at all, which is why there's no row
+for it; `debug_grpc_fields` is how that kind of question gets settled.
+
+## Support
+
+Polaris is free and MIT licensed. If it's earning its place in your menu bar,
+you're welcome to chip in — it's never expected.
+
+[![Donate with PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=U6P5Y4A5ZHHVY)
+
+## Credits
+
+The Polestar auth/API flow was originally studied from
+[Michiel1992/voltstarP](https://github.com/Michiel1992/voltstarP) and updated to
+Polestar's current login flow and GraphQL schema (with reference to
+[pypolestar](https://github.com/pypolestar/pypolestar)). Polaris is a from-scratch
+AppKit implementation.
+
+## Disclaimer
+
+Not affiliated with Polestar. Use at your own risk.
+
+## License
+
+[MIT](LICENSE)
+
+The MIT license covers the source code. It does not grant rights to the
+Polaris name or the app icon — please pick your own if you ship a fork.
+"Polestar" is a trademark of Polestar Performance AB, which is not
+affiliated with this project.
