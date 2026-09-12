@@ -6,12 +6,7 @@ let package = Package(
     platforms: [
         .macOS(.v13)
     ],
-    dependencies: [
-        // In-app updates. Sparkle only installs a build whose Developer ID
-        // signature matches the running one, so this is only possible now
-        // that releases are signed.
-        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.6.0")
-    ],
+    dependencies: [],
     targets: [
         // Code both the app and the widget need. Small on purpose: the
         // snapshot they exchange, the formatting they must agree on, and the
@@ -23,10 +18,7 @@ let package = Package(
         ),
         .executableTarget(
             name: "Norra",
-            dependencies: [
-                .product(name: "Sparkle", package: "Sparkle"),
-                "NorraShared"
-            ],
+            dependencies: ["NorraShared"],
             path: "Sources/Norra"
         ),
         // The widget is a second executable, hand-assembled into an .appex

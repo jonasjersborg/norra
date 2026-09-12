@@ -157,11 +157,14 @@ Releases are signed and notarized when these repository secrets are configured
 | `NOTARY_TEAM_ID` | 10-character Apple Developer Team ID |
 | `NOTARY_APP_PASSWORD` | App-specific password for that Apple ID |
 
-Two more secrets are optional and independent of signing: `SPARKLE_PRIVATE_KEY`
-signs the build for the update feed, and `HOMEBREW_TAP_TOKEN` — a token with
+One more secret is optional and independent of signing: `HOMEBREW_TAP_TOKEN` — a token with
 `contents: write` on [jonasjersborg/homebrew-norra](https://github.com/jonasjersborg/homebrew-norra) —
-lets the workflow point the cask at the new DMG. Both steps run after the
-release is published and neither can fail it.
+lets the workflow point the cask at the new DMG. It runs after the release is
+published and cannot fail it.
+
+There is no in-app updater. Sparkle was removed — it was more than half the
+bundle, and a personal build you compile yourself has nothing to update from.
+`git pull && make app` is the update mechanism.
 
 ## Debug flags
 

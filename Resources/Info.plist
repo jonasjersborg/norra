@@ -2,12 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>SUFeedURL</key>
-	<string>https://jonasjersborg.github.io/norra/appcast.xml</string>
-	<key>SUPublicEDKey</key>
-	<string>GSPIeW4QxIQn/hfIB0YZcDQvWMYadoEw4pdZTzXPngo=</string>
-	<key>SUEnableInstallerLauncherService</key>
-	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleIdentifier</key>

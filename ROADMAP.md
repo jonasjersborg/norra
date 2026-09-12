@@ -2,7 +2,7 @@
 
 What's planned for Norra, roughly in the order it's likely to happen.
 Nothing here is a promise with a date attached — it's a single developer and
-a car API that isn't documented for third parties.
+a personal project.
 
 Each item links to an issue. Comment there if you want it, or if you can
 help; that's more useful than a wish sent anywhere else.
@@ -53,74 +53,15 @@ can be promised before someone has tried it.
 
 ## Shipped
 
-- **Choose how often the car is polled** (v2.10.0) — a "Refresh while parked"
-  setting in the menu bar pane: every 1, 2, 5, 10 or 15 minutes, applied the
-  moment it's changed. Charging and driving still refresh every minute — those
-  are the moments the numbers actually move.
+Nothing yet — this fork has made no release. The features listed under
+[Features in the README](README.md#features) are inherited from Polaris and
+work, but they have not been through a tagged Norra build.
 
-- **The menu speaks VoiceOver** (v2.10.0) — the data rows, the car image and
-  the widget now carry proper accessibility labels, so "Battery, 78%" is read
-  aloud instead of silence. Decorative pieces like the battery bar stay quiet
-  rather than repeating what the text next to them already says.
-
-- **Readable release notes in the update window** (v2.10.0) — Sparkle's update
-  panel now shows what a release means for you, written from this roadmap,
-  instead of raw commit subjects.
-
-- **No more half-translated greeting** (v2.10.0) — Chinese and Korean systems
-  got a localized "hello" atop an otherwise English menu; the greeting now only
-  speaks languages the rest of the app speaks too.
-
-- **First run asks for your account** (v2.9.0) — signing in happens while you
-  watch, with the failure shown under the field that caused it, and the car is
-  picked from what the account reports instead of typed in as a VIN. The last
-  screen says where the app went, which is the question a menu-bar-only app
-  leaves people with.
-
-- **Sign out** (v2.9.0) — there was no way out short of deleting the app and its
-  Keychain items by hand: removing an account lived behind a button hidden until
-  a second car existed. It is always there now, and signing out of the last
-  account returns the app to its fresh-install state.
-
-- **Settings as panes** (v2.9.0) — a toolbar of five panes rather than one column
-  taller than the window, every control applying the moment it is changed, and a
-  status line saying whether the app is actually talking to the car. The version
-  moved to an About pane.
-
-- **A disk image that looks like the download page** (v2.9.0) — the installer
-  window now arrives sized, with its background and both icons placed, instead of
-  as a Finder file listing.
-
-- **Desktop widget** (v2.8.0) — small, medium and large. It reads what the app
-  last fetched rather than polling on its own, so adding one doesn't add a
-  request to your car, and clicking it drops the menu. The large size carries
-  the studio render of your exact car.
-
-- **Appcast published by CI** (v2.7.0) — the update feed is signed and
-  committed by the release workflow. The v2.6.0 entry was the last one made
-  by hand.
-
-- **Homebrew cask** (v2.6.0) — `brew install --cask jonasjersborg/norra/norra`,
-  kept current by the release workflow.
-- **In-app updates** (v2.6.0) — "Check for Updates…" in the menu, plus
-  automatic checking and installing, via Sparkle.
-- **More than one car, across accounts** (v2.6.0) — "Add Car…" in Settings;
-  every car from every login shows up in the same switcher.
-
-- **Signed and notarized builds** (v2.5.1) — releases are signed with a
-  Developer ID and notarized by Apple. The first-launch security warning is
-  gone.
-
-- **Multiple cars** (v2.2.0) — a switcher appears in the menu when the
-  account has more than one car.
-- **System language, 12 languages** (v2.5.0, five more in v2.6.0) — English, Danish,
-  Swedish, Norwegian, German, Spanish and Italian. The app follows the macOS
-  language setting; there is no language picker to find.
-- **"In use" while driving** (v2.5.0) — the charging status never says
-  "driving", so it's inferred from odometer freshness.
-- **Notifications** (v2.2.0) — charging started, complete, and charger faults.
-- **Charging power, AC/DC and charger connection** (v2.3.0).
-- **Update notice** (v2.1.0) — a menu item when a new release exists.
+Polaris's own release history lives in
+[its repository](https://github.com/simonbusborg/polaris/releases) and is not
+reproduced here: those versions shipped a different app against a different
+API, and listing them as Norra's would be a claim about work this project
+hasn't done.
 
 ## Not planned
 

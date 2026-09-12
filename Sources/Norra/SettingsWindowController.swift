@@ -56,12 +56,6 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
 
     // MARK: Updates pane
 
-    private let autoCheckCheckbox = NSButton(checkboxWithTitle: L("Check automatically"), target: nil, action: nil)
-    private let autoInstallCheckbox = NSButton(checkboxWithTitle: L("Download and install automatically"), target: nil, action: nil)
-
-    /// Sparkle isn't running under `swift run`, so the update pane is left
-    /// out entirely rather than shown dead.
-    private let updater: Updater?
 
     /// Set while the form holds a login for a car being added, so saving
     /// creates a second account instead of overwriting the current one.
@@ -77,11 +71,9 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
 
     private let tabs = NSTabViewController()
 
-    init(updater: Updater? = nil,
-         onChange: @escaping () -> Void,
+    init(onChange: @escaping () -> Void,
          onAccountChange: @escaping () -> Void,
          onSignIn: @escaping (@escaping (Result<Void, Error>) -> Void) -> Void) {
-        self.updater = (updater?.isAvailable == true) ? updater : nil
         self.onChange = onChange
         self.onAccountChange = onAccountChange
         self.onSignIn = onSignIn
@@ -150,9 +142,6 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
             pane(L("Menu Bar"), symbol: "menubar.rectangle", view: menuBarPane()),
             pane(L("Notifications"), symbol: "bell", view: notificationsPane())
         ]
-        if updater != nil {
-            items.append(pane(L("Updates"), symbol: "arrow.down.circle", view: updatesPane()))
-        }
         items.append(pane(L("About"), symbol: "info.circle", view: aboutPane()))
 
         // Every pane takes the same size — the tallest one — so clicking
@@ -338,21 +327,6 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         return stack
     }
 
-    private func updatesPane() -> NSView {
-        autoCheckCheckbox.target = self;   autoCheckCheckbox.action = #selector(updatesChanged)
-        autoInstallCheckbox.target = self; autoInstallCheckbox.action = #selector(updatesChanged)
-
-        let check = NSButton(title: L("Check for Updates…"), target: self,
-                             action: #selector(checkForUpdatesAction))
-
-        let stack = NSStackView(views: [autoCheckCheckbox, autoInstallCheckbox, check])
-        stack.orientation = .vertical
-        stack.alignment = .leading
-        stack.spacing = 12
-        stack.setCustomSpacing(18, after: autoInstallCheckbox)
-        return stack
-    }
-
     /// The version used to sit at the bottom of the settings form because
     /// there was nowhere else for it. There is now.
     private func aboutPane() -> NSView {
@@ -430,10 +404,6 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         lowThresholdPopup.selectItem(at: LowBatteryWatch.thresholds
             .firstIndex(of: Preferences.lowBatteryThreshold) ?? 0)
         lowThresholdPopup.isEnabled = (notifyLowCheckbox.state == .on)
-        if let updater {
-            autoCheckCheckbox.state = updater.automaticallyChecks ? .on : .off
-            autoInstallCheckbox.state = updater.automaticallyDownloads ? .on : .off
-        }
     }
 
     // MARK: - Instant apply
@@ -470,15 +440,6 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
             Preferences.lowBatteryThreshold = LowBatteryWatch.thresholds[lowThresholdPopup.indexOfSelectedItem]
         }
         lowThresholdPopup.isEnabled = (notifyLowCheckbox.state == .on)
-    }
-
-    @objc private func updatesChanged() {
-        updater?.automaticallyChecks = (autoCheckCheckbox.state == .on)
-        updater?.automaticallyDownloads = (autoInstallCheckbox.state == .on)
-    }
-
-    @objc private func checkForUpdatesAction() {
-        updater?.checkForUpdates()
     }
 
     // MARK: - Account

@@ -16,7 +16,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let api = VolvoAPI()
     private var signIn: CallbackListener?
     private let notifier = Notifier()
-    private let updater = Updater()
     private var refreshTimer: Timer?
     private var latest: CarData?
     private var lastError: String?
@@ -33,9 +32,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusController.onSelectCar = { [weak self] vin in self?.switchCar(to: vin) }
         if Preferences.commandsEnabled {
             statusController.onCommand = { [weak self] command in self?.runCommand(command) }
-        }
-        if updater.isAvailable {
-            statusController.onCheckForUpdates = { [weak self] in self?.updater.checkForUpdates() }
         }
         statusController.render(data: nil, error: nil, authenticated: false)
         notifier.requestAuthorizationIfNeeded()
@@ -354,7 +350,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func showSettings() {
         if settingsController == nil {
             settingsController = SettingsWindowController(
-                updater: updater,
                 onChange: { [weak self] in
                     // Instant apply: the pane has already written the
                     // preference, so this only has to act on it. No refetch —

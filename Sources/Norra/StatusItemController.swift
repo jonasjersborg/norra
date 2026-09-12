@@ -15,11 +15,6 @@ final class StatusItemController {
     private let onRefresh: () -> Void
     private let onSettings: () -> Void
 
-    /// Set when a newer release exists; renders as a menu item.
-    /// Set only when Sparkle is running (a real .app bundle); the menu item
-    /// is hidden otherwise.
-    var onCheckForUpdates: (() -> Void)?
-
     /// Cars on the account; more than one adds a Switch Car submenu.
     var cars: [CarSummary] = []
     var activeVin: String?
@@ -241,13 +236,6 @@ final class StatusItemController {
         refresh.target = self
         menu.addItem(refresh)
 
-        if onCheckForUpdates != nil {
-            let update = NSMenuItem(title: L("Check for Updates…"),
-                                    action: #selector(updateAction), keyEquivalent: "")
-            update.target = self
-            menu.addItem(update)
-        }
-
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: L("Quit Norra"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
 
@@ -262,7 +250,6 @@ final class StatusItemController {
         guard let vin = sender.representedObject as? String, vin != activeVin else { return }
         onSelectCar?(vin)
     }
-    @objc private func updateAction() { onCheckForUpdates?() }
     @objc private func commandAction(_ sender: NSMenuItem) {
         guard let command = sender.representedObject as? String else { return }
         onCommand?(command)

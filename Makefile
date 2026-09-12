@@ -42,17 +42,6 @@ WIDGET  = $(APP)/Contents/PlugIns/NorraWidget.appex
 WIDGET_BINARY = .build/apple/Products/Release/NorraWidget
 ENT     = build
 
-# Where SwiftPM unpacked Sparkle's xcframework. The version is in the path,
-# so it's found rather than hard-coded.
-SPARKLE = $(shell find .build/artifacts -type d -name Sparkle.framework -path '*macos*' | head -1)
-
-# Sparkle ships helpers that are separately-signed code in their own right:
-# two XPC services, an Updater.app and the Autoupdate tool. Every one of them
-# has to be signed before the framework is, and each has to actually exist —
-# an earlier version of this quietly skipped missing paths and the notary
-# service rejected the build for unsigned nested code.
-SIGN_NESTED = scripts/sign-sparkle.sh $(APP)
-
 .PHONY: build app dmg run test clean release entitlements install
 
 ## Build the release binary as a universal (Apple silicon + Intel) binary.
@@ -92,29 +81,15 @@ app: build entitlements
 ifneq ($(PROFILE),)
 	cp "$(PROFILE)" $(APP)/Contents/embedded.provisionprofile
 endif
-	# SwiftPM links Sparkle but won't embed it — an executable target has no
-	# bundle to embed into. The framework is copied by hand and the binary
-	# gets an rpath pointing at it, or the app dies at launch with "Library
-	# not loaded".
-	mkdir -p $(APP)/Contents/Frameworks
-	cp -R "$(SPARKLE)" $(APP)/Contents/Frameworks/
-	install_name_tool -add_rpath @executable_path/../Frameworks $(APP)/Contents/MacOS/Norra
-	# Nested code is signed first and the outer bundle last: signing the app
-	# seals the frameworks' signatures, so doing it the other way round
-	# invalidates them. --deep is Apple-discouraged and does the wrong thing
-	# with Sparkle's XPC services.
-	# The .appex is nested code too, so it is signed before the app that
-	# contains it — and with its own entitlements, because the extension is
+	# The .appex is nested code, so it is signed before the app that contains
+	# it — signing the app seals what is inside, so the other order would
+	# invalidate it — and with its own entitlements, because the extension is
 	# sandboxed while Norra is not.
 ifeq ($(IDENTITY),-)
 	codesign --force --entitlements $(ENT)/NorraWidget.entitlements -s - $(WIDGET)
-	@$(SIGN_NESTED) --force -s -
-	codesign --force -s - $(APP)/Contents/Frameworks/Sparkle.framework
 	codesign --force --entitlements $(ENT)/Norra.entitlements -s - $(APP)
 else
 	codesign --force --options runtime --timestamp --entitlements $(ENT)/NorraWidget.entitlements -s "$(IDENTITY)" $(WIDGET)
-	@$(SIGN_NESTED) --force --options runtime --timestamp -s "$(IDENTITY)"
-	codesign --force --options runtime --timestamp -s "$(IDENTITY)" $(APP)/Contents/Frameworks/Sparkle.framework
 	codesign --force --options runtime --timestamp --entitlements $(ENT)/Norra.entitlements -s "$(IDENTITY)" $(APP)
 endif
 	# Apple rejects the whole submission if one nested binary is unsigned, so
