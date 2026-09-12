@@ -1,8 +1,8 @@
-# Polaris
+# Norra
 
 Your Polestar, in the menu bar.
 
-Polaris is a tiny native macOS app that shows your Polestar's battery, range,
+Norra is a tiny native macOS app that shows your Polestar's battery, range,
 and charging status in the menu bar, and on the desktop as a widget. Pure
 AppKit — no Electron, no background services; the widget is SwiftUI because
 WidgetKit leaves no choice. It talks only to Polestar's official API.
@@ -10,9 +10,9 @@ WidgetKit leaves no choice. It talks only to Polestar's official API.
 Sibling project of [Teslaris](https://github.com/simonbusborg/teslaris)
 (the same app for Tesla).
 
-[![Downloads](https://img.shields.io/github/downloads/simonbusborg/polaris/total?label=downloads&color=blue)](https://github.com/simonbusborg/polaris/releases)
+[![Downloads](https://img.shields.io/github/downloads/simonbusborg/norra/total?label=downloads&color=blue)](https://github.com/simonbusborg/norra/releases)
 
-**[Download Polaris.dmg](https://github.com/simonbusborg/polaris/releases/latest/download/Polaris.dmg)** · [All releases](https://github.com/simonbusborg/polaris/releases) · [Website](https://simonbusborg.github.io/polaris/)
+**[Download Norra.dmg](https://github.com/simonbusborg/norra/releases/latest/download/Norra.dmg)** · [All releases](https://github.com/simonbusborg/norra/releases) · [Website](https://simonbusborg.github.io/norra/)
 
 ## Features
 
@@ -45,11 +45,11 @@ deliberately isn't happening.
 ## Install
 
 ```bash
-brew install --cask simonbusborg/polaris/polaris
+brew install --cask simonbusborg/norra/norra
 ```
 
-Or download `Polaris.dmg` from the [latest release](https://github.com/simonbusborg/polaris/releases/latest),
-open it, and drag Polaris to Applications (a `Polaris.zip` is also
+Or download `Norra.dmg` from the [latest release](https://github.com/simonbusborg/norra/releases/latest),
+open it, and drag Norra to Applications (a `Norra.zip` is also
 attached for scripted installs). However you install it, the app keeps itself
 up to date through Sparkle. Releases are built by GitHub Actions,
 signed with a Developer ID and notarized by Apple, so it opens like any
@@ -64,10 +64,10 @@ and VIN.
 Requires macOS 13+ and the Xcode Command Line Tools (`xcode-select --install`).
 
 ```bash
-git clone https://github.com/simonbusborg/polaris
-cd polaris
+git clone https://github.com/simonbusborg/norra
+cd norra
 make app
-open Polaris.app
+open Norra.app
 ```
 
 `make run` builds and runs the bare binary for quick iteration (launch-at-login,
@@ -87,7 +87,7 @@ build is signed:
   profile is needed and the group doesn't have to be registered in the
   developer portal — a Developer ID build carrying the entitlement notarizes
   and the container resolves at runtime.
-- **A plain `make app`** shares `~/Library/Application Support/Polaris`
+- **A plain `make app`** shares `~/Library/Application Support/Norra`
   instead, and the widget is signed with a sandbox exception for that folder.
   This isn't a shortcut: macOS validates an app group against the team in the
   signature, and an ad-hoc build has none, so it would be handed a container
@@ -98,8 +98,8 @@ build is signed:
 ## Releasing
 
 One command from a clean working tree — it bumps `Info.plist`, commits, tags
-and pushes, and GitHub Actions builds the app and attaches `Polaris.dmg` and
-`Polaris.zip` to the release:
+and pushes, and GitHub Actions builds the app and attaches `Norra.dmg` and
+`Norra.zip` to the release:
 
 ```bash
 make release VERSION=1.0.0
@@ -133,7 +133,7 @@ Releases are signed and notarized when these repository secrets are configured
 
 Two more secrets are optional and independent of signing: `SPARKLE_PRIVATE_KEY`
 signs the build for the update feed, and `HOMEBREW_TAP_TOKEN` — a token with
-`contents: write` on [simonbusborg/homebrew-polaris](https://github.com/simonbusborg/homebrew-polaris) —
+`contents: write` on [simonbusborg/homebrew-norra](https://github.com/simonbusborg/homebrew-norra) —
 lets the workflow point the cask at the new DMG. Both steps run after the
 release is published and neither can fail it.
 
@@ -142,8 +142,8 @@ release is published and neither can fail it.
 Off by default, and none of them alter what the API returns:
 
 ```bash
-defaults write com.weareheavy.polaris debug_grpc_fields -bool YES
-defaults delete com.weareheavy.polaris debug_grpc_fields   # turn it off again
+defaults write com.weareheavy.norra debug_grpc_fields -bool YES
+defaults delete com.weareheavy.norra debug_grpc_fields   # turn it off again
 ```
 
 | Key | Effect |
@@ -160,7 +160,7 @@ for it; `debug_grpc_fields` is how that kind of question gets settled.
 
 ## Support
 
-Polaris is free and MIT licensed. If it's earning its place in your menu bar,
+Norra is free and MIT licensed. If it's earning its place in your menu bar,
 you're welcome to chip in — it's never expected.
 
 [![Donate with PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=U6P5Y4A5ZHHVY)
@@ -170,7 +170,7 @@ you're welcome to chip in — it's never expected.
 The Polestar auth/API flow was originally studied from
 [Michiel1992/voltstarP](https://github.com/Michiel1992/voltstarP) and updated to
 Polestar's current login flow and GraphQL schema (with reference to
-[pypolestar](https://github.com/pypolestar/pypolestar)). Polaris is a from-scratch
+[pypolestar](https://github.com/pypolestar/pypolestar)). Norra is a from-scratch
 AppKit implementation.
 
 ## Disclaimer
@@ -182,6 +182,6 @@ Not affiliated with Polestar. Use at your own risk.
 [MIT](LICENSE)
 
 The MIT license covers the source code. It does not grant rights to the
-Polaris name or the app icon — please pick your own if you ship a fork.
+Norra name or the app icon — please pick your own if you ship a fork.
 "Polestar" is a trademark of Polestar Performance AB, which is not
 affiliated with this project.

@@ -44,7 +44,7 @@ EOF
 </dict>
 </plist>
 EOF
-} > "$OUT/Polaris.entitlements"
+} > "$OUT/Norra.entitlements"
 
 # Where a local build's widget is allowed to read, since it has no group.
 # An absolute path baked into the entitlements is only defensible because
@@ -54,7 +54,7 @@ local_exception() {
     cat <<EOF
 	<key>com.apple.security.temporary-exception.files.absolute-path.read-only</key>
 	<array>
-		<string>$HOME/Library/Application Support/Polaris/</string>
+		<string>$HOME/Library/Application Support/Norra/</string>
 	</array>
 EOF
 }
@@ -74,10 +74,10 @@ EOF
 </dict>
 </plist>
 EOF
-} > "$OUT/PolarisWidget.entitlements"
+} > "$OUT/NorraWidget.entitlements"
 
 if [ -n "$GROUP" ]; then
     echo "entitlements: App Group $GROUP"
 else
-    echo "entitlements: no TEAM_ID — local build reading $HOME/Library/Application Support/Polaris"
+    echo "entitlements: no TEAM_ID — local build reading $HOME/Library/Application Support/Norra"
 fi

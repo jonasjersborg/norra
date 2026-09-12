@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Polaris — Your Polestar, in the menu bar</title>
-<meta name="description" content="Polaris is a tiny native macOS menu bar app for monitoring your Polestar: battery, range, and charging status. Open source, MIT licensed.">
+<title>Norra — Your Polestar, in the menu bar</title>
+<meta name="description" content="Norra is a tiny native macOS menu bar app for monitoring your Polestar: battery, range, and charging status. Open source, MIT licensed.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A0A'/%3E%3Cpath d='M32 12c1 15 4 17 15 20-11 3-14 5-15 20-1-15-4-17-15-20 11-3 14-5 15-20z' fill='%23F5F2EC'/%3E%3Ccircle cx='45' cy='46' r='4' fill='%23FF4D00'/%3E%3C/svg%3E">
 <script>
   // Inline and blocking on purpose: a stored theme has to be on <html>
   // before the first paint, otherwise a dark visitor gets a white flash.
   try {
-    var t = localStorage.getItem('polaris-theme');
+    var t = localStorage.getItem('norra-theme');
     if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
   } catch (e) {
     // Safari in private mode throws on localStorage; the system preference
@@ -421,7 +421,7 @@
       radial-gradient(120% 80% at 10% 105%, rgba(110,118,168,.22), transparent 58%),
       linear-gradient(180deg,#232019 0%,#151517 100%);
   }
-  /* macOS menu bar: translucent strip, extras right-aligned, the Polaris
+  /* macOS menu bar: translucent strip, extras right-aligned, the Norra
      one wearing the highlight it gets while its menu is open. */
   .mac-menubar{
     position:absolute;top:9px;left:9px;right:9px;z-index:1;
@@ -958,7 +958,7 @@
 
 <header id="siteNav">
   <div class="wrap nav-inner">
-    <a class="mark" href="#">Polaris<span>.</span></a>
+    <a class="mark" href="#">Norra<span>.</span></a>
     <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="siteMenu"><i></i><i></i><i></i></button>
     <nav id="siteMenu">
       <a href="#menu">The menu</a>
@@ -971,7 +971,7 @@
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.2M12 19.4v2.2M4.2 12H2M22 12h-2.2M6.05 6.05L4.5 4.5M19.5 19.5l-1.55-1.55M17.95 6.05L19.5 4.5M4.5 19.5l1.55-1.55"/></svg>
         <span class="theme-label">Appearance</span>
       </button>
-      <a class="nav-dl" id="navDownload" href="https://github.com/simonbusborg/polaris/releases/latest/download/Polaris.dmg">
+      <a class="nav-dl" id="navDownload" href="https://github.com/simonbusborg/norra/releases/latest/download/Norra.dmg">
         Download
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>
       </a>
@@ -1000,7 +1000,7 @@
 
     <div class="hero-inner">
       <div class="hero-copy">
-        <img class="appicon" src="assets/app-icon.png" alt="Polaris app icon" width="1024" height="1024">
+        <img class="appicon" src="assets/app-icon.png" alt="Norra app icon" width="1024" height="1024">
         <div class="kicker">A native macOS app · for your Polestar</div>
         <h1>Your Polestar.<br><em>In the menu bar.</em></h1>
         <p class="lede">Battery, range and charging status — always one glance away.
@@ -1009,12 +1009,12 @@
       </div>
 
       <div class="hero-card">
-        <h2>Polaris</h2>
+        <h2>Norra</h2>
         <div class="meta">Free &amp; open source · macOS 13+ · Apple silicon &amp; Intel</div>
         <p>Signs in with your Polestar account, keeps the session in the
         Keychain, and talks to nothing but Polestar's own API.</p>
         <div class="cta-row" id="ctaRow">
-          <a class="btn" id="ctaDownload" href="https://github.com/simonbusborg/polaris/releases/latest/download/Polaris.dmg">
+          <a class="btn" id="ctaDownload" href="https://github.com/simonbusborg/norra/releases/latest/download/Norra.dmg">
             Download for macOS
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>
           </a>
@@ -1031,7 +1031,7 @@
       <div class="stat"><span>Refresh while idle</span><b>5 min</b>
         <p>Battery and range quietly update every five minutes.</p></div>
       <div class="stat"><span>Refresh while charging</span><b>60 s</b>
-        <p>Once you plug in, Polaris checks every minute so the numbers keep up.</p></div>
+        <p>Once you plug in, Norra checks every minute so the numbers keep up.</p></div>
       <div class="stat"><span>Trackers and third parties</span><b>0</b>
         <p>Your data travels between your Mac and Polestar — nowhere else.</p></div>
     </div>
@@ -1052,7 +1052,7 @@
           <div class="states" role="tablist" id="states"></div>
         </div>
         <!-- A crop of the top-right of a Mac display: the menu bar, the
-             Polaris extra lit up, and its menu hanging under it. The lid is
+             Norra extra lit up, and its menu hanging under it. The lid is
              cut off at the bottom rather than drawn whole — the subject is
              the menu, not the hardware. -->
         <div class="mac">
@@ -1111,7 +1111,7 @@
               <div class="action"><span>Refresh Now</span><span class="kbd">⌘R</span></div>
               <div class="action"><span>Settings…</span><span class="kbd">⌘,</span></div>
               <hr>
-            <div class="action"><span>Quit Polaris</span><span class="kbd">⌘Q</span></div>
+            <div class="action"><span>Quit Norra</span><span class="kbd">⌘Q</span></div>
           </div>
         </div>
       </div>
@@ -1125,7 +1125,7 @@
         <div class="notify-head">
           <div class="kicker">Notifications</div>
           <h2>It tells you when it matters.</h2>
-          <p>Polaris compares each refresh with the last one, so a banner only
+          <p>Norra compares each refresh with the last one, so a banner only
           shows up when something actually changed — plugged in, finished, or
           the charger threw an error. Nothing else pings you, and each of the
           three is its own switch in Settings.</p>
@@ -1232,7 +1232,7 @@
   </section>
 
   <section class="features" id="features">
-    <div class="kicker rv">Why Polaris</div>
+    <div class="kicker rv">Why Norra</div>
     <h2 class="rv">Small. Native. Yours.</h2>
     <div class="grid rv">
       <div class="cell">
@@ -1251,7 +1251,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         <h3>Keychain, not plaintext</h3>
         <p>Password and session live in the macOS Keychain. Once signed in,
-        Polaris resumes its session without logging in again.</p>
+        Norra resumes its session without logging in again.</p>
       </div>
       <div class="cell">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4.9 12.5H11L9.9 22 19 10.5h-6.2z"/></svg>
@@ -1262,7 +1262,7 @@
       <div class="cell">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
         <h3>Stays current</h3>
-        <p>Polaris updates itself. New versions arrive over a signed
+        <p>Norra updates itself. New versions arrive over a signed
         appcast — Sparkle refuses anything whose signature doesn't match —
         and you install with one click. Turn it off in Settings.</p>
       </div>
@@ -1289,7 +1289,7 @@
       <div class="kicker">Get started</div>
       <h2>Running in a minute.</h2>
       <p>Every release is a finished app that opens like any other. Drag it
-      to Applications, sign in with your Polestar account, and Polaris is in
+      to Applications, sign in with your Polestar account, and Norra is in
       the menu bar.</p>
     </div>
     <div class="rv">
@@ -1302,8 +1302,8 @@
       <div class="way" id="pane-dmg" role="tabpanel" aria-labelledby="way-dmg">
         <ol class="steps">
           <li><b>Download</b> — the disk image from the latest release.
-            <a class="dl" href="https://github.com/simonbusborg/polaris/releases/latest/download/Polaris.dmg">Polaris.dmg</a></li>
-          <li><b>Install</b> — open it, drag Polaris to Applications, launch it.</li>
+            <a class="dl" href="https://github.com/simonbusborg/norra/releases/latest/download/Norra.dmg">Norra.dmg</a></li>
+          <li><b>Install</b> — open it, drag Norra to Applications, launch it.</li>
           <li><b>Sign in</b> — email, password and your car's VIN.</li>
         </ol>
       </div>
@@ -1312,10 +1312,10 @@
         <ol class="steps">
           <li><b>Install</b> — one command; the tap is added for you.
             <div class="cmd">
-              <code>brew install --cask simonbusborg/polaris/polaris</code>
+              <code>brew install --cask simonbusborg/norra/norra</code>
               <button type="button" data-copy>Copy</button>
             </div></li>
-          <li><b>Launch</b> — Polaris lands in Applications like any other cask.</li>
+          <li><b>Launch</b> — Norra lands in Applications like any other cask.</li>
           <li><b>Sign in</b> — email, password and your car's VIN.</li>
         </ol>
       </div>
@@ -1324,17 +1324,17 @@
         <ol class="steps">
           <li><b>Build</b> — clone it and run one make target.
             <div class="cmd">
-              <code>git clone https://github.com/simonbusborg/polaris &amp;&amp; cd polaris &amp;&amp; make app</code>
+              <code>git clone https://github.com/simonbusborg/norra &amp;&amp; cd norra &amp;&amp; make app</code>
               <button type="button" data-copy>Copy</button>
             </div>
             <span class="note">Needs macOS 13+ and the Xcode Command Line Tools
             (<code>xcode-select --install</code>).</span></li>
-          <li><b>Launch</b> — <code>open Polaris.app</code>, or move it to Applications first.
+          <li><b>Launch</b> — <code>open Norra.app</code>, or move it to Applications first.
             <span class="note">A local build isn't notarized, so the first
             launch wants a right-click → Open.</span></li>
           <li><b>Sign in</b> — email, password and your car's VIN.
             <span class="note">The VIN is in the Polestar app under your car's
-            details, if it isn't on hand. Polaris keeps itself up to date from
+            details, if it isn't on hand. Norra keeps itself up to date from
             here.</span></li>
         </ol>
       </div>
@@ -1351,7 +1351,7 @@
     <div class="rv">
       <details>
         <summary>Will my Mac warn me when I open it?</summary>
-        <p>No. Apple has checked and approved every release, so Polaris opens
+        <p>No. Apple has checked and approved every release, so Norra opens
         straight away like anything from the App Store. Building it yourself
         from source is the one exception — that first launch wants a
         right-click → Open.</p>
@@ -1365,24 +1365,24 @@
       <details>
         <summary>Where do my Polestar details go?</summary>
         <p>Your password goes into your Mac's keychain and to Polestar when
-        Polaris signs in — nowhere else. There's no Polaris account and
+        Norra signs in — nowhere else. There's no Norra account and
         nothing in between: the app talks to Polestar directly, from your
         machine.</p>
       </details>
       <details>
         <summary>How does it stay up to date?</summary>
-        <p>Polaris looks for new versions on its own and offers them when they
+        <p>Norra looks for new versions on its own and offers them when they
         land. You never have to come back here for a newer copy.</p>
       </details>
     </div>
   </section>
 
   <footer>
-    <div>Polaris<span style="color:var(--accent)">.</span> — MIT licensed.
+    <div>Norra<span style="color:var(--accent)">.</span> — MIT licensed.
       Not affiliated with Polestar.</div>
     <div class="footer-right">
       <div>
-        <a href="https://github.com/simonbusborg/polaris">GitHub</a> ·
+        <a href="https://github.com/simonbusborg/norra">GitHub</a> ·
         <a href="https://unsplash.com/photos/hyvUS_Bs0Rs">Hero photos via Unsplash</a>
       </div>
       <a class="donate" href="https://www.paypal.com/donate/?hosted_button_id=U6P5Y4A5ZHHVY">Donate</a>
@@ -1682,7 +1682,7 @@
     moveWayPill();
   }));
 
-  // Polaris is a Mac app, so on anything else the download button is a dead
+  // Norra is a Mac app, so on anything else the download button is a dead
   // end. iPadOS reports itself as a Mac, so touch support settles that case.
   const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent)
     && !(navigator.maxTouchPoints > 1 || /iPhone|iPad|iPod/.test(navigator.userAgent));
@@ -1700,7 +1700,7 @@
     document.getElementById('navDownload').remove();
 
     note.hidden = false;
-    note.textContent = 'Polaris runs on macOS 13 or later — there is no version for this device. Open this page on your Mac to install it.';
+    note.textContent = 'Norra runs on macOS 13 or later — there is no version for this device. Open this page on your Mac to install it.';
 
     // A phone visitor almost certainly wants the link on their Mac rather
     // than the repo, so that gets the primary button.
@@ -1711,7 +1711,7 @@
     share.addEventListener('click', async () => {
       try {
         if (navigator.share) {
-          await navigator.share({title: 'Polaris — your Polestar in the menu bar', url: pageURL});
+          await navigator.share({title: 'Norra — your Polestar in the menu bar', url: pageURL});
         } else {
           await navigator.clipboard.writeText(pageURL);
           share.textContent = 'Link copied';
@@ -2025,7 +2025,7 @@ void main(){
       || (systemDark.matches ? 'dark' : 'light');
     const next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
-    try { localStorage.setItem('polaris-theme', next); } catch (e) {}
+    try { localStorage.setItem('norra-theme', next); } catch (e) {}
   });
 
   // Burger: the sheet is opened by class on the header, so the CSS owns

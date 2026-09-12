@@ -1,5 +1,5 @@
 #!/bin/bash
-# Submit Polaris.app for notarization and fail on the verdict.
+# Submit Norra.app for notarization and fail on the verdict.
 #
 # Called by the release workflow. It lives in a script rather than inline in
 # the YAML so the same submission can be run by hand when a release needs
@@ -8,7 +8,7 @@
 # Expects APPLE_ID, TEAM_ID and APP_PASSWORD in the environment.
 set -euo pipefail
 
-ditto -c -k --keepParent Polaris.app notarize.zip
+ditto -c -k --keepParent Norra.app notarize.zip
 # --wait exits 0 even when the verdict is Invalid, and the verdict alone
 # doesn't say what Apple objected to. Fetch the log and fail on it.
 ID=$(xcrun notarytool submit notarize.zip \

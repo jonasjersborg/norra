@@ -1,6 +1,6 @@
-# Contributing to Polaris
+# Contributing to Norra
 
-Polaris is a small app with a small maintainer team, so the bar for a change
+Norra is a small app with a small maintainer team, so the bar for a change
 is less "is this good code" than "will this still be understandable in a
 year". These notes are about making that easy, not about ceremony.
 
@@ -18,7 +18,7 @@ send them.
 Requires macOS 13 or later and a Swift 5.9 toolchain.
 
     make run     # quick launch, no bundle (launch-at-login is disabled here)
-    make app     # a real, ad-hoc-signed Polaris.app
+    make app     # a real, ad-hoc-signed Norra.app
     make test    # swift test
 
 `make run` is enough for most work. You need `make app` when you touch
@@ -32,7 +32,7 @@ has picked up unrelated changes — renames, editor settings, a `.gitignore`
 you like better — leave them out. A PR that mixes a feature with a rebrand is
 a PR nobody can review honestly.
 
-**Don't disable other people's paths.** Polaris talks to the car over a
+**Don't disable other people's paths.** Norra talks to the car over a
 reverse-engineered gRPC path today. If you add a second backend, it's
 additive: it activates when its credentials are present and falls back
 silently when they aren't. Nobody's setup should break because a feature they
@@ -73,7 +73,7 @@ permanently.
 
 ## Reporting bugs
 
-Include your macOS version, the Polaris version from the menu, and what the
+Include your macOS version, the Norra version from the menu, and what the
 car was doing at the time — parked, charging, driving. Polestar's API behaves
 differently in each, and "it showed the wrong range" is usually a question
 about which of those three it was.

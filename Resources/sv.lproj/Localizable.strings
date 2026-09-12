@@ -1,4 +1,4 @@
-/* Polaris — sv. Keys are the English source text. */
+/* Norra — sv. Keys are the English source text. */
 
 "Variant" = "Variant";
 "Product Code" = "Produktkod";
@@ -24,7 +24,7 @@
 "No data yet" = "Ingen data ännu";
 "Refresh Now" = "Uppdatera nu";
 "Settings…" = "Inställningar…";
-"Quit Polaris" = "Avsluta Polaris";
+"Quit Norra" = "Avsluta Norra";
 "Click to copy" = "Klicka för att kopiera";
 "Charging" = "Laddar";
 "Idle" = "Inaktiv";
@@ -55,7 +55,7 @@
 "Launch at login" = "Starta vid inloggning";
 "Charging problems" = "Laddningsproblem";
 "Low battery" = "Lågt batteri";
-"Polaris Settings" = "Polaris-inställningar";
+"Norra Settings" = "Norra-inställningar";
 "Polestar password" = "Polestar-lösenord";
 "Vehicle VIN" = "Bilens chassinummer";
 "Email:" = "E-post:";
@@ -79,7 +79,7 @@
 "Add Car…" = "Lägg till bil…";
 "Remove Car" = "Ta bort bil";
 "Sign out and forget this car?" = "Logga ut och glömma den här bilen?";
-"Polaris will forget the login for %@." = "Polaris glömmer inloggningen för %@.";
+"Norra will forget the login for %@." = "Norra glömmer inloggningen för %@.";
 
 /* Settings groups */
 "Account" = "Konto";
@@ -89,7 +89,7 @@
 "Updates" = "Uppdateringar";
 
 /* Widget */
-"Open Polaris to sign in" = "Öppna Polaris för att logga in";
+"Open Norra to sign in" = "Öppna Norra för att logga in";
 "Battery, range and charging status for your Polestar." = "Batteri, räckvidd och laddstatus för din Polestar.";
 
 /* Onboarding, settings panes, sign out */
@@ -102,7 +102,7 @@
 "Enter the email and password for your Polestar account." = "Ange e-post och lösenord för ditt Polestar-konto.";
 "Polestar rejected that email and password." = "Polestar avvisade den e-postadressen och det lösenordet.";
 "No cars on this account. You can enter a VIN manually in Settings." = "Inga bilar på det här kontot. Du kan ange ett VIN manuellt i Inställningar.";
-"Stored in the macOS Keychain, sent only to Polestar. Polaris has no server of its own." = "Sparas i macOS-nyckelringen och skickas bara till Polestar. Polaris har ingen egen server.";
+"Stored in the macOS Keychain, sent only to Polestar. Norra has no server of its own." = "Sparas i macOS-nyckelringen och skickas bara till Polestar. Norra har ingen egen server.";
 "Choose your car" = "Välj din bil";
 "One car on this account." = "En bil på det här kontot.";
 "%d cars on this account. You can switch any time from the menu." = "%d bilar på det här kontot. Du kan byta när som helst från menyn.";
@@ -111,7 +111,7 @@
 "Lives in the menu bar" = "Bor i menyraden";
 "No Dock icon, no window. Your battery sits in the menu bar — click it for range, charging and the doors." = "Ingen Dock-ikon, inget fönster. Batteriet sitter i menyraden — klicka för räckvidd, laddning och dörrarna.";
 "SHOW IN THE MENU BAR" = "VISA I MENYRADEN";
-"Open Polaris at login" = "Öppna Polaris vid inloggning";
+"Open Norra at login" = "Öppna Norra vid inloggning";
 "Email" = "E-post";
 "Password" = "Lösenord";
 "About" = "Om";
@@ -122,8 +122,8 @@
 "Distances" = "Avstånd";
 "Show in the menu bar" = "Visa i menyraden";
 "Sign Out" = "Logga ut";
-"Sign out of Polaris?" = "Logga ut från Polaris?";
-"Polaris will forget the login for %@ and stop reading your car." = "Polaris glömmer inloggningen för %@ och slutar läsa av din bil.";
+"Sign out of Norra?" = "Logga ut från Norra?";
+"Norra will forget the login for %@ and stop reading your car." = "Norra glömmer inloggningen för %@ och slutar läsa av din bil.";
 
 /* Menu bar pane: refresh pace */
 "Refresh while parked" = "Uppdatera när bilen är parkerad";

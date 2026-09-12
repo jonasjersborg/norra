@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>SUFeedURL</key>
-	<string>https://simonbusborg.github.io/polaris/appcast.xml</string>
+	<string>https://simonbusborg.github.io/norra/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>D0Pr3zqX74d8fY5dTAuyy53V8Wig1Rlu7fH1ecOmIrE=</string>
 	<key>SUEnableInstallerLauncherService</key>
@@ -11,15 +11,15 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.weareheavy.polaris</string>
+	<string>com.weareheavy.norra</string>
 	<key>CFBundleName</key>
-	<string>Polaris</string>
+	<string>Norra</string>
 	<key>CFBundleDisplayName</key>
-	<string>Polaris</string>
+	<string>Norra</string>
 	<key>CFBundleExecutable</key>
-	<string>Polaris</string>
+	<string>Norra</string>
 	<key>CFBundleIconFile</key>
-	<string>Polaris</string>
+	<string>Norra</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -33,18 +33,18 @@
 	<!-- Substituted by the Makefile from TEAM_ID, and empty in a build that
 	     has no Team ID to prefix it with. The app and the widget read the
 	     same key so neither hard-codes a Team ID. -->
-	<key>PolarisAppGroup</key>
+	<key>NorraAppGroup</key>
 	<string>__APP_GROUP__</string>
-	<!-- Clicking the widget opens polaris://open, which drops the menu bar
+	<!-- Clicking the widget opens norra://open, which drops the menu bar
 	     menu down rather than bringing up a window this app doesn't have. -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.weareheavy.polaris</string>
+			<string>com.weareheavy.norra</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>polaris</string>
+				<string>norra</string>
 			</array>
 		</dict>
 	</array>

@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Polaris",
+    name: "Norra",
     platforms: [
         .macOS(.v13)
     ],
@@ -18,16 +18,16 @@ let package = Package(
         // string lookup. Nothing that talks to Polestar lives here — the
         // extension has no business holding a session.
         .target(
-            name: "PolarisShared",
-            path: "Sources/PolarisShared"
+            name: "NorraShared",
+            path: "Sources/NorraShared"
         ),
         .executableTarget(
-            name: "Polaris",
+            name: "Norra",
             dependencies: [
                 .product(name: "Sparkle", package: "Sparkle"),
-                "PolarisShared"
+                "NorraShared"
             ],
-            path: "Sources/Polaris"
+            path: "Sources/Norra"
         ),
         // The widget is a second executable, hand-assembled into an .appex
         // the same way the .app itself is assembled — no Xcode project.
@@ -38,19 +38,19 @@ let package = Package(
         // NSExtensionMain rather than main(). Xcode's widget template sets
         // exactly this flag. unsafeFlags is fine here and only here —
         // SwiftPM forbids it in a package consumed as a dependency, and
-        // Polaris is only ever the root.
+        // Norra is only ever the root.
         .executableTarget(
-            name: "PolarisWidget",
-            dependencies: ["PolarisShared"],
-            path: "Sources/PolarisWidget",
+            name: "NorraWidget",
+            dependencies: ["NorraShared"],
+            path: "Sources/NorraWidget",
             linkerSettings: [
                 .unsafeFlags(["-Xlinker", "-e", "-Xlinker", "_NSExtensionMain"])
             ]
         ),
         .testTarget(
-            name: "PolarisTests",
-            dependencies: ["Polaris", "PolarisShared"],
-            path: "Tests/PolarisTests"
+            name: "NorraTests",
+            dependencies: ["Norra", "NorraShared"],
+            path: "Tests/NorraTests"
         )
     ]
 )

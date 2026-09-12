@@ -85,14 +85,14 @@ if curated:
 else:
     body = "\n".join(f"      <li>{html.escape(i)}</li>" for i in items) or \
            "      <li>Maintenance and small fixes.</li>"
-compare = (f"https://github.com/simonbusborg/polaris/compare/{previous}...{tag}"
-           if previous else f"https://github.com/simonbusborg/polaris/releases/tag/{tag}")
+compare = (f"https://github.com/simonbusborg/norra/compare/{previous}...{tag}"
+           if previous else f"https://github.com/simonbusborg/norra/releases/tag/{tag}")
 
 page = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Polaris {version}</title>
+<title>Norra {version}</title>
 <style>
   /* Sparkle renders this in a small WebView that follows the system
      appearance, so the page has to work in both and stay legible at
@@ -120,7 +120,7 @@ page = f"""<!DOCTYPE html>
 </style>
 </head>
 <body>
-  <h1>Polaris {version}</h1>
+  <h1>Norra {version}</h1>
   <p class="date">{date}</p>
   <ul>
 {body}

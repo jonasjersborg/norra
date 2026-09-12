@@ -1,7 +1,7 @@
-APP     = Polaris.app
+APP     = Norra.app
 # Universal builds land under .build/apple, not .build/release.
-BINARY  = .build/apple/Products/Release/Polaris
-DMG     = Polaris.dmg
+BINARY  = .build/apple/Products/Release/Norra
+DMG     = Norra.dmg
 
 # Code-signing identity. Default "-" is ad-hoc (local builds); CI passes a
 # "Developer ID Application: …" identity for notarized releases.
@@ -12,7 +12,7 @@ IDENTITY ?= -
 # it still assembles and signs; it simply carries no group, and the widget
 # says so on its face instead of resolving something plausible and wrong.
 TEAM_ID ?=
-APP_GROUP = $(if $(TEAM_ID),$(TEAM_ID).group.com.weareheavy.polaris,)
+APP_GROUP = $(if $(TEAM_ID),$(TEAM_ID).group.com.weareheavy.norra,)
 
 # A Developer ID build that claims an App Group needs that entitlement
 # authorised by a provisioning profile embedded in the bundle. Point this at
@@ -26,8 +26,8 @@ VERSION = $(shell /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString'
 BUILD   = $(shell /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' Resources/Info.plist)
 
 # The widget extension, hand-assembled like the app bundle around it.
-WIDGET  = $(APP)/Contents/PlugIns/PolarisWidget.appex
-WIDGET_BINARY = .build/apple/Products/Release/PolarisWidget
+WIDGET  = $(APP)/Contents/PlugIns/NorraWidget.appex
+WIDGET_BINARY = .build/apple/Products/Release/NorraWidget
 ENT     = build
 
 # Where SwiftPM unpacked Sparkle's xcframework. The version is in the path,
@@ -54,12 +54,12 @@ build:
 app: build entitlements
 	rm -rf $(APP)
 	mkdir -p $(APP)/Contents/MacOS $(APP)/Contents/Resources
-	cp $(BINARY) $(APP)/Contents/MacOS/Polaris
+	cp $(BINARY) $(APP)/Contents/MacOS/Norra
 	# The app reads back the App Group it was signed with rather than
 	# hard-coding a Team ID, so the identifier is substituted here too.
 	sed -e 's|__APP_GROUP__|$(APP_GROUP)|' \
 		Resources/Info.plist > $(APP)/Contents/Info.plist
-	cp Resources/Polaris.icns $(APP)/Contents/Resources/Polaris.icns
+	cp Resources/Norra.icns $(APP)/Contents/Resources/Norra.icns
 	# The .lproj folders are what makes the app follow the system language.
 	cp -R Resources/*.lproj $(APP)/Contents/Resources/
 	# The widget is a second executable dropped into PlugIns as an .appex.
@@ -67,11 +67,11 @@ app: build entitlements
 	# read back the identifier it was signed with rather than hard-coding a
 	# Team ID into source.
 	mkdir -p $(WIDGET)/Contents/MacOS
-	cp $(WIDGET_BINARY) $(WIDGET)/Contents/MacOS/PolarisWidget
+	cp $(WIDGET_BINARY) $(WIDGET)/Contents/MacOS/NorraWidget
 	sed -e 's|__APP_GROUP__|$(APP_GROUP)|' \
 		-e 's|__VERSION__|$(VERSION)|' \
 		-e 's|__BUILD__|$(BUILD)|' \
-		Resources/PolarisWidget-Info.plist > $(WIDGET)/Contents/Info.plist
+		Resources/NorraWidget-Info.plist > $(WIDGET)/Contents/Info.plist
 	# NSLocalizedString resolves against Bundle.main, which for the widget is
 	# the .appex — so it needs its own copy of the translations or it renders
 	# English inside a Danish system.
@@ -86,24 +86,24 @@ endif
 	# not loaded".
 	mkdir -p $(APP)/Contents/Frameworks
 	cp -R "$(SPARKLE)" $(APP)/Contents/Frameworks/
-	install_name_tool -add_rpath @executable_path/../Frameworks $(APP)/Contents/MacOS/Polaris
+	install_name_tool -add_rpath @executable_path/../Frameworks $(APP)/Contents/MacOS/Norra
 	# Nested code is signed first and the outer bundle last: signing the app
 	# seals the frameworks' signatures, so doing it the other way round
 	# invalidates them. --deep is Apple-discouraged and does the wrong thing
 	# with Sparkle's XPC services.
 	# The .appex is nested code too, so it is signed before the app that
 	# contains it — and with its own entitlements, because the extension is
-	# sandboxed while Polaris is not.
+	# sandboxed while Norra is not.
 ifeq ($(IDENTITY),-)
-	codesign --force --entitlements $(ENT)/PolarisWidget.entitlements -s - $(WIDGET)
+	codesign --force --entitlements $(ENT)/NorraWidget.entitlements -s - $(WIDGET)
 	@$(SIGN_NESTED) --force -s -
 	codesign --force -s - $(APP)/Contents/Frameworks/Sparkle.framework
-	codesign --force --entitlements $(ENT)/Polaris.entitlements -s - $(APP)
+	codesign --force --entitlements $(ENT)/Norra.entitlements -s - $(APP)
 else
-	codesign --force --options runtime --timestamp --entitlements $(ENT)/PolarisWidget.entitlements -s "$(IDENTITY)" $(WIDGET)
+	codesign --force --options runtime --timestamp --entitlements $(ENT)/NorraWidget.entitlements -s "$(IDENTITY)" $(WIDGET)
 	@$(SIGN_NESTED) --force --options runtime --timestamp -s "$(IDENTITY)"
 	codesign --force --options runtime --timestamp -s "$(IDENTITY)" $(APP)/Contents/Frameworks/Sparkle.framework
-	codesign --force --options runtime --timestamp --entitlements $(ENT)/Polaris.entitlements -s "$(IDENTITY)" $(APP)
+	codesign --force --options runtime --timestamp --entitlements $(ENT)/Norra.entitlements -s "$(IDENTITY)" $(APP)
 endif
 	# Apple rejects the whole submission if one nested binary is unsigned, so
 	# prove the bundle is sound here rather than finding out from a notary
@@ -112,15 +112,15 @@ endif
 	@echo "Done → open $(APP)  (or move it to /Applications)"
 
 ## Replace the copy in /Applications and restart what needs restarting.
-## Copying by hand is how you end up with Polaris.app nested inside itself,
+## Copying by hand is how you end up with Norra.app nested inside itself,
 ## and the widget host caches an extension until chronod is restarted — so
 ## the loop that actually tests a widget change is one command.
 install: app
-	rm -rf /Applications/Polaris.app
-	ditto $(APP) /Applications/Polaris.app
-	killall Polaris 2>/dev/null || true
+	rm -rf /Applications/Norra.app
+	ditto $(APP) /Applications/Norra.app
+	killall Norra 2>/dev/null || true
 	killall chronod 2>/dev/null || true
-	open /Applications/Polaris.app
+	open /Applications/Norra.app
 	@echo "Installed → add the widget, or wait for the next poll"
 
 ## Package the existing bundle as a drag-to-Applications disk image.
@@ -154,15 +154,15 @@ dmg:
 	tiffutil -cathidpicheck $(DMG_BG) $(DMG_BG2X) -out dmg-staging/.background/background.tiff
 	# A compressed image is read-only, so the arrangement is made on a
 	# read/write one first and frozen on the way out.
-	hdiutil create -volname Polaris -srcfolder dmg-staging -ov \
+	hdiutil create -volname Norra -srcfolder dmg-staging -ov \
 		-format UDRW -fs HFS+ dmg-rw.dmg
-	hdiutil attach dmg-rw.dmg -readwrite -noverify -noautoopen -mountpoint /Volumes/Polaris
+	hdiutil attach dmg-rw.dmg -readwrite -noverify -noautoopen -mountpoint /Volumes/Norra
 	# Finder scripting can be refused on a headless CI session. The window
 	# arrangement is not worth failing a release over — an unstyled but
 	# working image ships instead.
 	-osascript \
 		-e 'tell application "Finder"' \
-		-e '  tell disk "Polaris"' \
+		-e '  tell disk "Norra"' \
 		-e '    open' \
 		-e '    set current view of container window to icon view' \
 		-e '    set toolbar visible of container window to false' \
@@ -173,7 +173,7 @@ dmg:
 		-e '    set icon size of theViewOptions to $(DMG_ICON)' \
 		-e '    set text size of theViewOptions to 12' \
 		-e '    set background picture of theViewOptions to file ".background:background.tiff"' \
-		-e '    set position of item "Polaris.app" of container window to {$(DMG_APP_X), $(DMG_ICON_Y)}' \
+		-e '    set position of item "Norra.app" of container window to {$(DMG_APP_X), $(DMG_ICON_Y)}' \
 		-e '    set position of item "Applications" of container window to {$(DMG_DEST_X), $(DMG_ICON_Y)}' \
 		-e '    update without registering applications' \
 		-e '    close' \
@@ -182,7 +182,7 @@ dmg:
 	# Finder writes .DS_Store lazily; detaching too early loses the layout.
 	sync
 	sleep 2
-	hdiutil detach /Volumes/Polaris
+	hdiutil detach /Volumes/Norra
 	hdiutil convert dmg-rw.dmg -format UDZO -imagekey zlib-level=9 -o $(DMG)
 	rm -rf dmg-staging dmg-rw.dmg
 	@echo "Done → $(DMG)"
@@ -195,7 +195,7 @@ entitlements:
 ## Named explicitly: the package has two executables now, and `swift run`
 ## with no argument no longer knows which one is meant.
 run:
-	swift run Polaris
+	swift run Norra
 
 test:
 	swift test

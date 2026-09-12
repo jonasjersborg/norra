@@ -7,7 +7,7 @@
 //  between them all come from the same numbers the Makefile lays the icons
 //  out with — move an icon in one place and the art follows.
 //
-//  Deliberately typography-free: Finder already writes "Polaris" in the
+//  Deliberately typography-free: Finder already writes "Norra" in the
 //  title bar and under the app icon, and a wordmark painted into the
 //  background would need a font renderer to sit here for no gain.
 //

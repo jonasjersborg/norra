@@ -2,7 +2,7 @@
 """Prepend a release to Sparkle's appcast.
 
 Called from .github/workflows/release.yml with the signature attributes
-sign_update produced for Polaris.zip. Kept out of the workflow because a
+sign_update produced for Norra.zip. Kept out of the workflow because a
 multi-line XML template inside a YAML block scalar is unreadable and
 fragile.
 
@@ -14,10 +14,10 @@ from datetime import datetime, timezone
 tag, build, attrs = sys.argv[1], sys.argv[2], sys.argv[3]
 version = tag[1:] if tag.startswith("v") else tag
 date = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
-base = "https://github.com/simonbusborg/polaris/releases"
+base = "https://github.com/simonbusborg/norra/releases"
 # The notes page lives beside the appcast on Pages; linking the GitHub
 # release instead renders the whole site inside Sparkle's panel.
-notes = "https://simonbusborg.github.io/polaris"
+notes = "https://simonbusborg.github.io/norra"
 
 item = f"""    <item>
       <title>{version}</title>
@@ -26,7 +26,7 @@ item = f"""    <item>
       <sparkle:shortVersionString>{version}</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
       <sparkle:releaseNotesLink>{notes}/notes/{tag}.html</sparkle:releaseNotesLink>
-      <enclosure url="{base}/download/{tag}/Polaris.zip"
+      <enclosure url="{base}/download/{tag}/Norra.zip"
                  type="application/octet-stream" {attrs} />
     </item>"""
 
