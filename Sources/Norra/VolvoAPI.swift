@@ -95,6 +95,19 @@ final class VolvoAPI {
         }
     }
 
+    /// Whether there is a live access token. False before sign-in and after
+    /// a refresh that Volvo rejected.
+    var isAuthenticated: Bool { accessToken != nil }
+
+    /// Point the client at another car on the same account. Identity and
+    /// capabilities are per-car, so both are refetched; the session is not
+    /// touched, because one consent covers every car on the account.
+    func selectCar(vin: String) async {
+        vehicle = nil
+        capabilities = []
+        try? await loadVehicle(vin: vin)
+    }
+
     private func debugLog(_ message: String) {
         guard UserDefaults.standard.bool(forKey: "debug_logging") else { return }
         NSLog("[VolvoAPI] %@", message)
@@ -388,7 +401,6 @@ final class VolvoAPI {
             modelYear: vehicle?.modelYear,
             registrationNo: nil,
             vin: vin,
-            spec: nil,
             ownerFirstName: nil,
             // The connected-vehicle odometer is in kilometres, while CarData
             // holds metres — the drive detection compares two readings and

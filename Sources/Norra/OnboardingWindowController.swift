@@ -47,17 +47,16 @@ final class OnboardingWindowController: NSWindowController, NSWindowDelegate {
     private enum Step { case signIn, cars, finish }
     private var step: Step = .signIn
 
-    private let api: PolestarAPI
+    private let api: VolvoAPI
     private let onFinish: () -> Void
     private let onManualVIN: () -> Void
-
-    private var password = ""
+    /// Runs the browser consent flow. Owned by AppDelegate, which holds the
+    /// listener — this screen only asks for it and reports what came back.
+    private let onSignIn: (@escaping (Result<Void, Error>) -> Void) -> Void
     private var discovered: [CarSummary] = []
     private var selectedVin: String?
     private var isWorking = false
 
-    private let emailField = NSTextField()
-    private let passwordField = NSSecureTextField()
     private let displayPopup = NSPopUpButton()
     /// The text inside the menu bar preview, so changing the popup shows
     /// what the bar will actually read rather than leaving a stale sample.
@@ -76,10 +75,12 @@ final class OnboardingWindowController: NSWindowController, NSWindowDelegate {
     /// the stack is in the hierarchy and has a width to be equal to.
     private var fullWidth: [NSView] = []
 
-    init(api: PolestarAPI,
+    init(api: VolvoAPI,
+         onSignIn: @escaping (@escaping (Result<Void, Error>) -> Void) -> Void,
          onFinish: @escaping () -> Void,
          onManualVIN: @escaping () -> Void) {
         self.api = api
+        self.onSignIn = onSignIn
         self.onFinish = onFinish
         self.onManualVIN = onManualVIN
 
@@ -157,51 +158,27 @@ final class OnboardingWindowController: NSWindowController, NSWindowDelegate {
             window?.setFrame(frame, display: true, animate: false)
         }
 
-        if step == .signIn { window?.makeFirstResponder(emailField) }
     }
 
     // MARK: Step 1 — sign in
 
+    /// No email or password field: Volvo's flow sends the user to their own
+    /// browser, on Volvo's own domain, and hands back an authorization code.
+    /// Norra never sees the credentials — which is the point, and worth
+    /// saying on the screen rather than leaving the button unexplained.
     private func buildSignIn(into stack: NSStackView) {
         stack.addArrangedSubview(title(L("Sign in")))
         stack.setCustomSpacing(8, after: stack.arrangedSubviews.last!)
-        stack.addArrangedSubview(sub(L("Sign in with the account you use in the Polestar app.")))
+        stack.addArrangedSubview(sub(L("Norra opens Volvo ID in your browser. Your password is never typed into Norra.")))
         stack.setCustomSpacing(22, after: stack.arrangedSubviews.last!)
 
-        emailField.placeholderString = "you@example.com"
-        passwordField.placeholderString = "••••••••"
-        for field in [emailField, passwordField] as [NSTextField] {
-            field.font = .systemFont(ofSize: 13)
-            field.isEnabled = !isWorking
+        if !VolvoCredentials.current.isConfigured {
+            // Nothing can happen without an application key, and the reason
+            // is not guessable — say so here rather than letting the button
+            // fail with a 401.
+            stack.addArrangedSubview(errorRow(L("Add your Volvo application key in Settings first.")))
+            stack.setCustomSpacing(16, after: stack.arrangedSubviews.last!)
         }
-
-        // Password managers fill native apps over the accessibility API, and
-        // they look for a field that says what it holds. Without this the
-        // two fields are anonymous text boxes and 1Password's app filling
-        // has nothing to aim at. contentType is the modern hint; the
-        // accessibility label and role description are what older versions
-        // and the rest of the assistive stack read.
-        if #available(macOS 14.0, *) {
-            emailField.contentType = .username
-            passwordField.contentType = .password
-        }
-        emailField.setAccessibilityLabel(L("Email"))
-        emailField.setAccessibilityIdentifier("username")
-        passwordField.setAccessibilityLabel(L("Password"))
-        passwordField.setAccessibilityIdentifier("password")
-        // Return in either field is Sign In — the button is the only action
-        // on this screen, so the keyboard shouldn't need the mouse.
-        emailField.target = self;    emailField.action = #selector(signInAction)
-        passwordField.target = self; passwordField.action = #selector(signInAction)
-
-        stack.addArrangedSubview(label(L("EMAIL")))
-        stack.setCustomSpacing(6, after: stack.arrangedSubviews.last!)
-        stack.addArrangedSubview(fill(emailField, in: stack))
-        stack.setCustomSpacing(14, after: stack.arrangedSubviews.last!)
-        stack.addArrangedSubview(label(L("PASSWORD")))
-        stack.setCustomSpacing(6, after: stack.arrangedSubviews.last!)
-        stack.addArrangedSubview(fill(passwordField, in: stack))
-        stack.setCustomSpacing(errorText == nil ? 20 : 10, after: stack.arrangedSubviews.last!)
 
         if let errorText {
             stack.addArrangedSubview(errorRow(errorText))
@@ -213,12 +190,13 @@ final class OnboardingWindowController: NSWindowController, NSWindowDelegate {
             spinner.style = .spinning
             spinner.controlSize = .small
             spinner.startAnimation(nil)
-            let row = NSStackView(views: [spinner, sub(L("Signing in…"))])
+            let row = NSStackView(views: [spinner, sub(L("Waiting for your browser…"))])
             row.orientation = .horizontal
             row.spacing = 9
             stack.addArrangedSubview(row)
         } else {
-            let button = primaryButton(L("Sign In"), action: #selector(signInAction))
+            let button = primaryButton(L("Sign In with Volvo ID"), action: #selector(signInAction))
+            button.isEnabled = VolvoCredentials.current.isConfigured
             stack.addArrangedSubview(fill(button, in: stack))
         }
         stack.setCustomSpacing(20, after: stack.arrangedSubviews.last!)
@@ -232,61 +210,33 @@ final class OnboardingWindowController: NSWindowController, NSWindowDelegate {
 
     @objc private func signInAction() {
         guard !isWorking else { return }
-        let email = emailField.stringValue.trimmingCharacters(in: .whitespaces)
-        let pass = passwordField.stringValue
-        guard !email.isEmpty, !pass.isEmpty else {
-            errorText = L("Enter the email and password for your Polestar account.")
-            render()
-            return
-        }
-
-        password = pass
         errorText = nil
         isWorking = true
         render()
 
-        Task {
-            do {
-                // An empty VIN is deliberate: the whole point of this screen
-                // is that the account is asked what cars it has. fetchCarInfo
-                // falls back to the account's first car when the VIN doesn't
-                // match, which is exactly the behaviour wanted here.
-                try await api.authenticate(email: email, password: pass, vin: "")
-                let cars = api.cars
-                await MainActor.run {
-                    self.isWorking = false
-                    guard !cars.isEmpty else {
-                        // A login that works but reports no cars is a real
-                        // case (a car sold, or an account that only has an
-                        // order). Typing the VIN is the only way forward.
-                        self.errorText = L("No cars on this account. You can enter a VIN manually in Settings.")
-                        self.render()
-                        return
-                    }
-                    self.discovered = cars
-                    self.selectedVin = cars.first?.vin
-                    self.step = .cars
+        onSignIn { [weak self] result in
+            guard let self else { return }
+            self.isWorking = false
+            switch result {
+            case .success:
+                let cars = self.api.cars
+                guard !cars.isEmpty else {
+                    // Consent that works but reports no cars is a real case
+                    // (a car sold, or an account that only has an order).
+                    // Typing the VIN is the only way forward.
+                    self.errorText = L("No cars on this account. You can enter a VIN manually in Settings.")
                     self.render()
+                    return
                 }
-            } catch {
-                await MainActor.run {
-                    self.isWorking = false
-                    self.errorText = Self.message(for: error)
-                    self.render()
-                    self.window?.makeFirstResponder(self.passwordField)
-                }
+                self.discovered = cars
+                self.selectedVin = cars.first?.vin
+                self.step = .cars
+                self.render()
+            case .failure(let error):
+                self.errorText = error.localizedDescription
+                self.render()
             }
         }
-    }
-
-    /// `PolestarError.authenticationFailed` reads "check email/password",
-    /// which is advice the form itself is now giving. Name what happened
-    /// instead, and let everything else speak for itself.
-    private static func message(for error: Error) -> String {
-        if case PolestarError.authenticationFailed = error {
-            return L("Polestar rejected that email and password.")
-        }
-        return error.localizedDescription
     }
 
     // MARK: Step 2 — choose a car
@@ -405,22 +355,18 @@ final class OnboardingWindowController: NSWindowController, NSWindowDelegate {
     /// Everything the rest of the app reads to consider itself configured.
     /// Written in one place at the end rather than field by field, so an
     /// abandoned onboarding leaves no half-account behind.
+    ///
+    /// No password is stored, because none was typed: the refresh token
+    /// VolvoAPI wrote to the Keychain during sign-in is the whole session.
+    /// The account is keyed by the first car's VIN rather than an email —
+    /// Volvo's consent flow never tells us the address, and `Accounts` only
+    /// needs a stable identifier to hang the car list on.
     private func commit(vin: String) {
-        let email = emailField.stringValue.trimmingCharacters(in: .whitespaces)
-        Preferences.email = email
+        let account = discovered.first?.vin ?? vin
+        Preferences.email = account
         Preferences.vin = vin
-        Accounts.add(email)
-        Accounts.setCars(discovered, for: email)
-        if !password.isEmpty {
-            do {
-                try Keychain.savePassword(password)
-            } catch {
-                let alert = NSAlert()
-                alert.messageText = L("Couldn't save password to Keychain")
-                alert.informativeText = error.localizedDescription
-                alert.runModal()
-            }
-        }
+        Accounts.add(account)
+        Accounts.setCars(discovered, for: account)
     }
 
     // MARK: - Pieces

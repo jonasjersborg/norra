@@ -131,3 +131,28 @@
 "Refresh while parked" = "Aggiornamento ad auto parcheggiata";
 "Every minute" = "Ogni minuto";
 "Every %d minutes" = "Ogni %d minuti";
+
+/* Volvo sign-in, commands and the callback pages */
+"Sign In with Volvo ID" = "Accedi con Volvo ID";
+"Norra opens Volvo ID in your browser. Your password is never typed into Norra." = "Norra apre Volvo ID nel tuo browser. La tua password non viene mai digitata in Norra.";
+"Add your Volvo application key in Settings first." = "Aggiungi prima la tua chiave applicazione Volvo nelle Impostazioni.";
+"Waiting for your browser…" = "In attesa del browser…";
+"Sign-in failed" = "Accesso non riuscito";
+"Sign-in cancelled" = "Accesso annullato";
+"Signed in" = "Accesso effettuato";
+"Signed in to Volvo" = "Accesso effettuato a Volvo";
+"You can close this tab and return to Norra." = "Puoi chiudere questa scheda e tornare a Norra.";
+"Norra didn't receive an authorization code. Try again from Settings." = "Norra non ha ricevuto alcun codice di autorizzazione. Riprova dalle Impostazioni.";
+"Timed out waiting for Volvo to redirect back" = "Tempo scaduto in attesa di Volvo";
+"Port %d is in use — close whatever is using it and try again" = "La porta %d è occupata — chiudi ciò che la usa e riprova";
+"Application key" = "Chiave applicazione";
+"Client ID" = "ID client";
+"Volvo application key" = "Chiave applicazione Volvo";
+"Car" = "Auto";
+"Lock" = "Blocca";
+"Unlock" = "Sblocca";
+"Honk" = "Clacson";
+"Flash Lights" = "Lampeggia";
+"Unlock the car?" = "Sbloccare l'auto?";
+"The car will be unlocked immediately." = "L'auto verrà sbloccata immediatamente.";
+"%@ failed: %@" = "%@ non riuscito: %@";

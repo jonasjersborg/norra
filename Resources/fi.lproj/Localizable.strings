@@ -131,3 +131,28 @@
 "Refresh while parked" = "Päivitys auton ollessa pysäköitynä";
 "Every minute" = "Minuutin välein";
 "Every %d minutes" = "%d minuutin välein";
+
+/* Volvo sign-in, commands and the callback pages */
+"Sign In with Volvo ID" = "Kirjaudu Volvo ID:llä";
+"Norra opens Volvo ID in your browser. Your password is never typed into Norra." = "Norra avaa Volvo ID:n selaimessasi. Salasanaasi ei koskaan kirjoiteta Norraan.";
+"Add your Volvo application key in Settings first." = "Lisää ensin Volvo-sovellusavaimesi Asetuksiin.";
+"Waiting for your browser…" = "Odotetaan selainta…";
+"Sign-in failed" = "Kirjautuminen epäonnistui";
+"Sign-in cancelled" = "Kirjautuminen peruutettu";
+"Signed in" = "Kirjauduttu sisään";
+"Signed in to Volvo" = "Kirjauduttu Volvoon";
+"You can close this tab and return to Norra." = "Voit sulkea tämän välilehden ja palata Norraan.";
+"Norra didn't receive an authorization code. Try again from Settings." = "Norra ei saanut valtuutuskoodia. Yritä uudelleen Asetuksista.";
+"Timed out waiting for Volvo to redirect back" = "Aikakatkaisu odotettaessa Volvoa";
+"Port %d is in use — close whatever is using it and try again" = "Portti %d on käytössä — sulje sitä käyttävä ohjelma ja yritä uudelleen";
+"Application key" = "Sovellusavain";
+"Client ID" = "Asiakastunnus";
+"Volvo application key" = "Volvo-sovellusavain";
+"Car" = "Auto";
+"Lock" = "Lukitse";
+"Unlock" = "Avaa lukitus";
+"Honk" = "Äänimerkki";
+"Flash Lights" = "Vilkuta valoja";
+"Unlock the car?" = "Avataanko auton lukitus?";
+"The car will be unlocked immediately." = "Auton lukitus avataan välittömästi.";
+"%@ failed: %@" = "%@ epäonnistui: %@";

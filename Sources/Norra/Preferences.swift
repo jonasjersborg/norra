@@ -80,6 +80,16 @@ enum Preferences {
         set { d.set(newValue.rawValue, forKey: "refresh_interval") }
     }
 
+    /// Whether sign-in also asks Volvo for the lock/unlock/honk/flash
+    /// scopes. Off by default: a battery gauge should not hold the authority
+    /// to unlock a car unless its owner deliberately said so. Changing it
+    /// only takes effect at the next sign-in, because scopes are fixed when
+    /// consent is granted.
+    static var commandsEnabled: Bool {
+        get { d.bool(forKey: "commands_enabled") }
+        set { d.set(newValue, forKey: "commands_enabled") }
+    }
+
     static var launchAtLogin: Bool {
         get { d.bool(forKey: "launch_at_login") }
         set { d.set(newValue, forKey: "launch_at_login") }

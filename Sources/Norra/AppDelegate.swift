@@ -13,7 +13,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var settingsController: SettingsWindowController?
     private var onboardingController: OnboardingWindowController?
 
-    private let api = PolestarAPI()
+    private let api = VolvoAPI()
+    private var signIn: CallbackListener?
     private let notifier = Notifier()
     private let updater = Updater()
     private var refreshTimer: Timer?
@@ -30,6 +31,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onSettings: { [weak self] in self?.showSettings() }
         )
         statusController.onSelectCar = { [weak self] vin in self?.switchCar(to: vin) }
+        if Preferences.commandsEnabled {
+            statusController.onCommand = { [weak self] command in self?.runCommand(command) }
+        }
         if updater.isAvailable {
             statusController.onCheckForUpdates = { [weak self] in self?.updater.checkForUpdates() }
         }
@@ -81,40 +85,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.mainMenu = mainMenu
     }
 
+    /// Enough to attempt a session: an application key, a car, and a stored
+    /// refresh token. There is no password — Volvo signs in through the
+    /// browser, and what persists afterwards is the refresh token alone.
     private var hasCredentials: Bool {
-        guard !Preferences.email.isEmpty, !Preferences.vin.isEmpty else { return false }
-        return ((try? Keychain.readPassword()) ?? nil)?.isEmpty == false
+        guard VolvoCredentials.current.isConfigured, !Preferences.vin.isEmpty else { return false }
+        return ((try? Keychain.readSessionToken()) ?? nil)?.isEmpty == false
     }
 
     // MARK: - Session lifecycle
 
     func startSession() {
-        guard hasCredentials,
-              let pass = try? Keychain.readPassword()
-        else {
+        guard VolvoCredentials.current.isConfigured, !Preferences.vin.isEmpty else {
             statusController.render(data: nil, error: L("Not configured"), authenticated: false)
             showSettings()
             return
         }
-        let email = Preferences.email
         let vin = Preferences.vin
-
-        // Ad-hoc builds have no stable code-signing identity, so the item a
-        // previous version created triggers a keychain prompt once. Re-saving
-        // after a successful read rebinds it to this binary — later launches
-        // of this version read silently.
-        try? Keychain.savePassword(pass)
 
         statusController.showLoading()
         Task {
             do {
-                // Resume the stored session when possible; only replay the
-                // full scripted password login when that fails.
-                do {
-                    try await api.restoreSession(vin: vin)
-                } catch {
-                    try await api.authenticate(email: email, password: pass, vin: vin)
-                }
+                // The only way back in without a browser. When Volvo has
+                // retired the refresh token this throws, and the user has to
+                // consent again — there is no password to replay.
+                try await api.restoreSession(vin: vin)
                 let data = try await api.fetchCarData(vin: vin)
                 await MainActor.run { self.apply(data) }
             } catch {
@@ -133,11 +128,51 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// Open Volvo's consent page in the user's browser and wait for the
+    /// redirect. Completion runs on the main actor with the outcome, so
+    /// Settings and onboarding can both report it in their own way.
+    func beginBrowserSignIn(includeCommands: Bool = Preferences.commandsEnabled,
+                            completion: @escaping (Result<Void, Error>) -> Void) {
+        guard VolvoCredentials.current.isConfigured else {
+            completion(.failure(VolvoError.notConfigured))
+            return
+        }
+        guard let url = api.authorizationURL(includeCommands: includeCommands) else {
+            completion(.failure(VolvoError.authenticationFailed))
+            return
+        }
+
+        // Only one sign-in at a time: a second would try to bind the same
+        // port and fail in a way that looks like the first one broke.
+        signIn?.cancel()
+        let listener = CallbackListener()
+        signIn = listener
+
+        Task {
+            do {
+                async let callback = listener.waitForCallback()
+                await MainActor.run { NSWorkspace.shared.open(url) }
+                let redirected = try await callback
+                try await api.authenticate(callbackURL: redirected, vin: Preferences.vin)
+                await MainActor.run {
+                    self.signIn = nil
+                    completion(.success(()))
+                    self.refreshNow()
+                }
+            } catch {
+                await MainActor.run {
+                    self.signIn = nil
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
     /// True when the session is gone rather than the network being flaky —
-    /// no stored credentials, or Polestar rejecting the login.
+    /// no stored credentials, or Volvo rejecting the refresh token.
     static func isSignedOut(_ error: Error) -> Bool {
         switch error {
-        case PolestarError.notConfigured, PolestarError.authenticationFailed, PolestarError.sessionExpired:
+        case VolvoError.notConfigured, VolvoError.authenticationFailed, VolvoError.sessionExpired:
             return true
         default:
             return false
@@ -153,16 +188,66 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 await MainActor.run { self.apply(data) }
             } catch {
                 await MainActor.run {
-                    // A refresh token Polestar has retired can't be nursed
-                    // back by polling it every minute — sign in again with
-                    // the stored password instead of showing a dead session
-                    // as an error row until the next launch.
-                    if Self.isSignedOut(error) { self.startSession(); return }
+                    // A refresh token Volvo has retired can't be nursed back
+                    // by polling it every minute, and there is no password to
+                    // replay — the user has to consent again, so put Settings
+                    // in front of them rather than an error row that never
+                    // resolves.
+                    if Self.isSignedOut(error) {
+                        self.signedOut()
+                        self.showSettings()
+                        return
+                    }
                     self.lastError = error.localizedDescription
                     self.statusController.render(data: self.latest, error: error.localizedDescription, authenticated: true)
                     self.settingsController?.updateStatus(data: self.latest,
                                                           error: error.localizedDescription,
                                                           authenticated: true)
+                }
+            }
+        }
+    }
+
+    /// Send a command to the car.
+    ///
+    /// Unlock asks first. The others are recoverable — a honk is over in a
+    /// second, a lock can be undone — but an unlocked car in a car park is
+    /// not something to do by accident from a menu.
+    private func runCommand(_ command: String) {
+        guard api.isAuthenticated else { startSession(); return }
+
+        if command == "unlock" {
+            let alert = NSAlert()
+            alert.messageText = L("Unlock the car?")
+            alert.informativeText = L("The car will be unlocked immediately.")
+            alert.addButton(withTitle: L("Unlock"))
+            alert.addButton(withTitle: L("Cancel"))
+            guard alert.runModal() == .alertFirstButtonReturn else { return }
+        }
+
+        let vin = Preferences.vin
+        Task {
+            do {
+                let result = try await api.executeCommand(command, vin: vin)
+                await MainActor.run {
+                    // Volvo accepts the request and reports what the car did
+                    // with it; a rejected command still returns 200, so the
+                    // invoke status is the only thing worth believing.
+                    let ok = result.uppercased().contains("COMPLETED")
+                        || result.uppercased().contains("SUCCESS")
+                    if !ok {
+                        self.lastError = String(format: L("%@ failed: %@"), command, result)
+                        self.redrawStatusItem()
+                    }
+                    // Locking changes what the car reports, so pull a fresh
+                    // reading rather than leaving the menu showing the old one.
+                    self.refreshNow()
+                }
+            } catch {
+                await MainActor.run {
+                    self.lastError = error.localizedDescription
+                    self.redrawStatusItem()
+                    if Self.isSignedOut(error) { self.showSettings() }
                 }
             }
         }
@@ -249,6 +334,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if onboardingController == nil {
             onboardingController = OnboardingWindowController(
                 api: api,
+                onSignIn: { [weak self] completion in
+                    self?.beginBrowserSignIn(completion: completion)
+                },
                 onFinish: { [weak self] in
                     self?.applyLaunchAtLogin()
                     self?.startSession()
@@ -288,6 +376,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     } else {
                         self.signedOut()
                     }
+                }
+,
+                onSignIn: { [weak self] completion in
+                    self?.beginBrowserSignIn(completion: completion)
                 }
             )
         }

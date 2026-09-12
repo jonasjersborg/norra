@@ -49,55 +49,11 @@ final class FormattingTests: XCTestCase {
         XCTAssertEqual(StatusItemController.kilowatts(watts: 150000, locale: enUS), "150 kW")
         XCTAssertEqual(StatusItemController.kilowatts(watts: 900, locale: enUS), "0.9 kW")
     }
-
-    func testProtobufVarintRoundTrip() {
-        for value: UInt64 in [0, 1, 127, 128, 300, 7200, UInt64(Int32.max)] {
-            let encoded = Protobuf.varint(value)
-            var message = Protobuf.varint(UInt64(5 << 3 | 0))  // field 5, wire 0
-            message.append(encoded)
-            let fields = Protobuf.fields(message)
-            XCTAssertEqual(fields.count, 1)
-            XCTAssertEqual(fields.first?.number, 5)
-            XCTAssertEqual(fields.first?.varint, value)
-        }
-    }
-
-    func testProtobufStringFieldAndFrame() {
-        let message = Protobuf.stringField(2, "LPSVSESEKML123456")
-        let fields = Protobuf.fields(message)
-        XCTAssertEqual(fields.first?.number, 2)
-        XCTAssertEqual(fields.first.map { String(decoding: $0.data, as: UTF8.self) },
-                       "LPSVSESEKML123456")
-
-        let framed = Protobuf.grpcFrame(message)
-        XCTAssertEqual(framed[0], 0)  // uncompressed
-        let length = Int(framed[1]) << 24 | Int(framed[2]) << 16 | Int(framed[3]) << 8 | Int(framed[4])
-        XCTAssertEqual(length, message.count)
-        XCTAssertEqual(framed.count, message.count + 5)
-    }
-
-    func testGrpcBatteryParse() {
-        // Battery { charger_connection_status(6)=CONNECTED,
-        //           charging_power_watts(10)=7200, charging_current_amps(11)=16,
-        //           charging_voltage_volts(18)=230 }
-        var battery = Data()
-        battery.append(Protobuf.varint(UInt64(6 << 3 | 0)));  battery.append(Protobuf.varint(1))
-        battery.append(Protobuf.varint(UInt64(10 << 3 | 0))); battery.append(Protobuf.varint(7200))
-        battery.append(Protobuf.varint(UInt64(11 << 3 | 0))); battery.append(Protobuf.varint(16))
-        battery.append(Protobuf.varint(UInt64(18 << 3 | 0))); battery.append(Protobuf.varint(230))
-
-        let extras = PolestarGRPC.parseBattery(battery)
-        XCTAssertEqual(extras.chargerConnectionStatus, "CONNECTED")
-        XCTAssertEqual(extras.chargingPowerWatts, 7200)
-        XCTAssertEqual(extras.chargingCurrentAmps, 16)
-        XCTAssertEqual(extras.chargingVoltageVolts, 230)
-    }
-
     func testIsPluggedIn() {
         func car(connection: String?) -> CarData {
             CarData(batteryPercentage: 50, rangeKm: 200,
                     chargingStatus: "CHARGING_STATUS_IDLE", estimatedChargingTimeToFullMinutes: nil,
-                    modelName: nil, modelYear: nil, registrationNo: nil, vin: nil, spec: nil,
+                    modelName: nil, modelYear: nil, registrationNo: nil, vin: nil,
                     ownerFirstName: nil,
                     odometerMeters: nil, daysToService: nil, distanceToServiceKm: nil,
                     serviceWarning: false, fluidWarnings: [], imageData: nil,
@@ -119,7 +75,7 @@ final class FormattingTests: XCTestCase {
                  odometerMeters: Int? = nil) -> CarData {
             CarData(batteryPercentage: 50, rangeKm: 200,
                     chargingStatus: status, estimatedChargingTimeToFullMinutes: nil,
-                    modelName: nil, modelYear: nil, registrationNo: nil, vin: nil, spec: nil,
+                    modelName: nil, modelYear: nil, registrationNo: nil, vin: nil,
                     ownerFirstName: nil,
                     odometerMeters: odometerMeters, daysToService: nil, distanceToServiceKm: nil,
                     serviceWarning: false, fluidWarnings: [], imageData: nil,
@@ -191,7 +147,7 @@ final class FormattingTests: XCTestCase {
         func car(status: String, battery: Double, connection: String?) -> CarData {
             CarData(batteryPercentage: battery, rangeKm: 200,
                     chargingStatus: status, estimatedChargingTimeToFullMinutes: nil,
-                    modelName: nil, modelYear: nil, registrationNo: nil, vin: nil, spec: nil,
+                    modelName: nil, modelYear: nil, registrationNo: nil, vin: nil,
                     ownerFirstName: nil,
                     odometerMeters: nil, daysToService: nil, distanceToServiceKm: nil,
                     serviceWarning: false, fluidWarnings: [], imageData: nil,
@@ -227,12 +183,6 @@ final class FormattingTests: XCTestCase {
         XCTAssertEqual(StatusItemController.greeting("Simon", languageCode: "xx"), "Hi, Simon")
         XCTAssertEqual(StatusItemController.greeting("Simon", languageCode: nil), "Hi, Simon")
     }
-
-    func testDemoVinAliasesRealVin() {
-        XCTAssertEqual(PolestarAPI.apiVin("DEMO-YSM4ZPAA9TF452140"), "YSM4ZPAA9TF452140")
-        XCTAssertEqual(PolestarAPI.apiVin("YSM4ZPAA9TF452140"), "YSM4ZPAA9TF452140")
-    }
-
     func testStatusKeyStripsPrefixes() {
         XCTAssertEqual(car(status: "CHARGING_STATUS_CHARGING").statusKey, "CHARGING")
         XCTAssertEqual(car(status: "CHARGING_STATUS_V2_SMART_CHARGING").statusKey, "SMART_CHARGING")
@@ -249,7 +199,7 @@ final class FormattingTests: XCTestCase {
     private func car(status: String) -> CarData {
         CarData(batteryPercentage: 50, rangeKm: 200,
                 chargingStatus: status, estimatedChargingTimeToFullMinutes: nil,
-                modelName: nil, modelYear: nil, registrationNo: nil, vin: nil, spec: nil,
+                modelName: nil, modelYear: nil, registrationNo: nil, vin: nil,
                 ownerFirstName: nil,
                 odometerMeters: nil, daysToService: nil, distanceToServiceKm: nil,
                 serviceWarning: false, fluidWarnings: [], imageData: nil,

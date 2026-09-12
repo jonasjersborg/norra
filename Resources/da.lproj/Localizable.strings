@@ -133,3 +133,28 @@
 "Refresh while parked" = "Opdater, mens bilen er parkeret";
 "Every minute" = "Hvert minut";
 "Every %d minutes" = "Hvert %d. minut";
+
+/* Volvo sign-in, commands and the callback pages */
+"Sign In with Volvo ID" = "Log ind med Volvo ID";
+"Norra opens Volvo ID in your browser. Your password is never typed into Norra." = "Norra åbner Volvo ID i din browser. Din adgangskode indtastes aldrig i Norra.";
+"Add your Volvo application key in Settings first." = "Tilføj din Volvo-programnøgle i Indstillinger først.";
+"Waiting for your browser…" = "Venter på din browser…";
+"Sign-in failed" = "Login mislykkedes";
+"Sign-in cancelled" = "Login annulleret";
+"Signed in" = "Logget ind";
+"Signed in to Volvo" = "Logget ind hos Volvo";
+"You can close this tab and return to Norra." = "Du kan lukke denne fane og vende tilbage til Norra.";
+"Norra didn't receive an authorization code. Try again from Settings." = "Norra modtog ingen autorisationskode. Prøv igen fra Indstillinger.";
+"Timed out waiting for Volvo to redirect back" = "Tiden løb ud, mens der blev ventet på Volvo";
+"Port %d is in use — close whatever is using it and try again" = "Port %d er optaget — luk det program, der bruger den, og prøv igen";
+"Application key" = "Programnøgle";
+"Client ID" = "Klient-id";
+"Volvo application key" = "Volvo-programnøgle";
+"Car" = "Bil";
+"Lock" = "Lås";
+"Unlock" = "Lås op";
+"Honk" = "Dyt";
+"Flash Lights" = "Blink med lygterne";
+"Unlock the car?" = "Lås bilen op?";
+"The car will be unlocked immediately." = "Bilen låses op med det samme.";
+"%@ failed: %@" = "%@ mislykkedes: %@";

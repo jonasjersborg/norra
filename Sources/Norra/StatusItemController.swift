@@ -24,6 +24,10 @@ final class StatusItemController {
     var cars: [CarSummary] = []
     var activeVin: String?
     var onSelectCar: ((String) -> Void)?
+    /// Lock / unlock / honk / flash. Nil unless the user granted the command
+    /// scopes at sign-in, and the submenu is omitted entirely when it is —
+    /// an always-visible row that always fails is worse than no row.
+    var onCommand: ((String) -> Void)?
 
     private let timeFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -111,19 +115,6 @@ final class StatusItemController {
             let title = [data.modelName, data.modelYear].compactMap { $0 }.joined(separator: " · ")
             if !title.isEmpty {
                 menu.addItem(rowItem(title, bold: true))
-            }
-            // Only the variant earns a row: the title above already says
-            // "Polestar 4 · 2026", so make and model would just repeat it, and
-            // the raw pno34 means nothing to an owner.
-            if let variant = data.spec?.variant {
-                menu.addItem(kvItem(L("Variant"), variant))
-            }
-            // `defaults write com.weareheavy.norra debug_pno34 -bool YES`
-            // brings the raw code back, copyable. It is how a car's pno34 gets
-            // read off a running app in the first place, which is the only way
-            // PNO34.variantsByPrefix will ever be filled in.
-            if let spec = data.spec, UserDefaults.standard.bool(forKey: "debug_pno34") {
-                menu.addItem(kvItem(L("Product Code"), spec.raw, copyable: true))
             }
             if let plate = data.registrationNo, !plate.isEmpty {
                 menu.addItem(kvItem(L("Plate"), plate, copyable: true))
@@ -221,6 +212,25 @@ final class StatusItemController {
 
         menu.addItem(.separator())
 
+        if onCommand != nil {
+            let commands = NSMenuItem(title: L("Car"), action: nil, keyEquivalent: "")
+            let submenu = NSMenu()
+            // Nested rather than inline: these are the only items in the menu
+            // that change the car rather than report on it, and a stray click
+            // on "Unlock" in a menu you opened to read the battery is a bad
+            // afternoon. One extra hover is the right price.
+            for (title, command) in [(L("Lock"), "lock"), (L("Unlock"), "unlock"),
+                                     (L("Honk"), "honk"), (L("Flash Lights"), "flash")] {
+                let item = NSMenuItem(title: title, action: #selector(commandAction), keyEquivalent: "")
+                item.target = self
+                item.representedObject = command
+                submenu.addItem(item)
+            }
+            commands.submenu = submenu
+            menu.addItem(commands)
+            menu.addItem(.separator())
+        }
+
         let settings = NSMenuItem(title: L("Settings…"), action: #selector(settingsAction), keyEquivalent: ",")
         settings.target = self
         menu.addItem(settings)
@@ -253,6 +263,10 @@ final class StatusItemController {
         onSelectCar?(vin)
     }
     @objc private func updateAction() { onCheckForUpdates?() }
+    @objc private func commandAction(_ sender: NSMenuItem) {
+        guard let command = sender.representedObject as? String else { return }
+        onCommand?(command)
+    }
 
     // MARK: - Key/value rows (custom views: exact colors, exact width,
     // no system dimming, aligned with the car image)

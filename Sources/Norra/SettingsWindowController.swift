@@ -25,8 +25,9 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
 
     // MARK: Account pane
 
-    private let emailField = NSTextField()
-    private let passwordField = NSSecureTextField()
+    private let apiKeyField = NSSecureTextField()
+    private let clientIdField = NSTextField()
+    private let signInButton = NSButton(title: L("Sign In with Volvo ID"), target: nil, action: nil)
     private let vinField = NSTextField()
     private let statusDot = NSView()
     private let statusLabel = NSTextField(labelWithString: "")
@@ -71,15 +72,19 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
     private let onChange: () -> Void
     /// The account changed — the session has to be started over.
     private let onAccountChange: () -> Void
+    /// Runs the browser consent flow; owned by AppDelegate.
+    private let onSignIn: (@escaping (Result<Void, Error>) -> Void) -> Void
 
     private let tabs = NSTabViewController()
 
     init(updater: Updater? = nil,
          onChange: @escaping () -> Void,
-         onAccountChange: @escaping () -> Void) {
+         onAccountChange: @escaping () -> Void,
+         onSignIn: @escaping (@escaping (Result<Void, Error>) -> Void) -> Void) {
         self.updater = (updater?.isAvailable == true) ? updater : nil
         self.onChange = onChange
         self.onAccountChange = onAccountChange
+        self.onSignIn = onSignIn
 
         let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 480, height: 260),
@@ -204,28 +209,26 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
     // MARK: Panes
 
     private func accountPane() -> NSView {
-        emailField.placeholderString = "you@example.com"
-        passwordField.placeholderString = L("Polestar password")
+        apiKeyField.placeholderString = L("Volvo application key")
+        clientIdField.placeholderString = L("Client ID")
         vinField.placeholderString = L("Vehicle VIN")
         // Editable text fields have no useful intrinsic width, so they are
         // given the pane's: three fields all ending at the same point.
-        for field in [emailField, passwordField, vinField] {
+        for field in [apiKeyField, clientIdField, vinField] as [NSTextField] {
             field.translatesAutoresizingMaskIntoConstraints = false
             field.widthAnchor.constraint(equalToConstant: Self.contentWidth).isActive = true
         }
-        // Same reason as onboarding: a password manager filling a native app
-        // looks for fields that declare what they hold.
-        if #available(macOS 14.0, *) {
-            emailField.contentType = .username
-            passwordField.contentType = .password
-        }
-        emailField.setAccessibilityIdentifier("username")
-        passwordField.setAccessibilityIdentifier("password")
+        apiKeyField.setAccessibilityIdentifier("vcc-api-key")
+
+        signInButton.target = self
+        signInButton.action = #selector(signInAction)
+        signInButton.bezelStyle = .rounded
 
         let form = NSStackView(views: [
-            field(L("Email"), emailField),
-            field(L("Password"), passwordField),
-            field(L("VIN"), vinField)
+            field(L("Application key"), apiKeyField),
+            field(L("Client ID"), clientIdField),
+            field(L("VIN"), vinField),
+            signInButton
         ])
         form.orientation = .vertical
         form.alignment = .leading
@@ -412,8 +415,9 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
         // say hidden from nearly everyone.
         removeCarButton.isHidden = Accounts.all.isEmpty
         removeCarButton.title = isLastAccount ? L("Sign Out") : L("Remove Car")
-        emailField.stringValue = Preferences.email
-        passwordField.stringValue = ((try? Keychain.readPassword()) ?? nil) ?? ""
+        let credentials = VolvoCredentials.current
+        apiKeyField.stringValue = credentials.vccApiKey
+        clientIdField.stringValue = credentials.clientId
         vinField.stringValue = Preferences.vin
         displayPopup.selectItem(at: DisplayOption.allCases.firstIndex(of: Preferences.displayOption) ?? 0)
         unitPopup.selectItem(at: DistanceUnit.allCases.firstIndex(of: Preferences.distanceUnit) ?? 0)
@@ -480,49 +484,44 @@ final class SettingsWindowController: NSWindowController, NSWindowDelegate {
     // MARK: - Account
 
     @objc private func saveAccountAction() {
-        let email = emailField.stringValue.trimmingCharacters(in: .whitespaces)
-        let previous = Preferences.email
-        // Editing the address of the account you're on is a rename, not a
-        // new car: the old entry and its Keychain items would otherwise be
-        // orphaned with no way to reach them.
-        if !isAddingCar, !previous.isEmpty, previous != email {
-            Accounts.remove(previous)
-        }
-        Preferences.email = email
-        Accounts.add(email)
-        Preferences.vin = vinField.stringValue.trimmingCharacters(in: .whitespaces).uppercased()
+        let vin = vinField.stringValue.trimmingCharacters(in: .whitespaces).uppercased()
+        VolvoCredentials.store(
+            vccApiKey: apiKeyField.stringValue.trimmingCharacters(in: .whitespaces),
+            clientId: clientIdField.stringValue.trimmingCharacters(in: .whitespaces),
+            redirectURI: VolvoCredentials.current.redirectURI)
+        Preferences.vin = vin
 
-        let password = passwordField.stringValue
-        if password.isEmpty {
-            Keychain.deletePassword()
-        } else {
-            do {
-                try Keychain.savePassword(password)
-            } catch {
-                let alert = NSAlert()
-                alert.messageText = L("Couldn't save password to Keychain")
-                alert.informativeText = error.localizedDescription
-                alert.runModal()
-                return
-            }
-        }
-
-        // Credentials may have changed — drop the stored session so the next
-        // login uses the new account rather than resuming the old one.
+        // Changed application credentials invalidate the session they were
+        // issued under, so drop it rather than letting the next poll fail
+        // with a token the new client can't use.
         Keychain.deleteSessionToken()
         isAddingCar = false
         onAccountChange()
     }
 
-    /// Empty the form for a second Polestar login. The current car stays
-    /// signed in — its password and session live under its own address in
-    /// the Keychain — and both turn up in the menu's switcher afterwards.
+    @objc private func signInAction() {
+        signInButton.isEnabled = false
+        signInButton.title = L("Waiting for your browser…")
+        onSignIn { [weak self] result in
+            guard let self else { return }
+            self.signInButton.isEnabled = true
+            self.signInButton.title = L("Sign In with Volvo ID")
+            if case .failure(let error) = result {
+                let alert = NSAlert()
+                alert.messageText = L("Sign-in failed")
+                alert.informativeText = error.localizedDescription
+                alert.runModal()
+            }
+        }
+    }
+
+    /// Empty the VIN for a second Volvo account. The application key is kept
+    /// — it belongs to this copy of Norra, not to an account — and only the
+    /// car and its session are cleared.
     @objc private func addCarAction() {
         isAddingCar = true
-        emailField.stringValue = ""
-        passwordField.stringValue = ""
         vinField.stringValue = ""
-        window?.makeFirstResponder(emailField)
+        window?.makeFirstResponder(vinField)
     }
 
     private var isLastAccount: Bool { Accounts.all.count < 2 }
