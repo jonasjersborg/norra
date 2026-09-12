@@ -69,8 +69,10 @@
 "Couldn't save password to Keychain" = "Kon wachtwoord niet in Sleutelhanger bewaren";
 "HTTP error: %@" = "HTTP-fout: %@";
 "Parse error: %@" = "Verwerkingsfout: %@";
-"Authentication failed — check email/password" = "Aanmelden mislukt — controleer e-mail/wachtwoord";
 "Session expired — signing in again" = "Sessie verlopen — opnieuw inloggen";
+"Authentication failed — sign in again" = "Verificatie mislukt — meld je opnieuw aan";
+"Not supported by this car: %@" = "Niet ondersteund door deze auto: %@";
+"Too many requests — Volvo is rate limiting" = "Te veel verzoeken — Volvo beperkt";
 "Not configured — open Settings" = "Niet geconfigureerd — open Instellingen";
 "Check for Updates…" = "Controleer op updates…";
 "Check automatically" = "Automatisch controleren";

@@ -69,8 +69,10 @@
 "Couldn't save password to Keychain" = "Kunne ikke lagre passordet i nøkkelringen";
 "HTTP error: %@" = "HTTP-feil: %@";
 "Parse error: %@" = "Tolkningsfeil: %@";
-"Authentication failed — check email/password" = "Innloggingen mislyktes — sjekk e-post/passord";
 "Session expired — signing in again" = "Økten er utløpt — logger inn på nytt";
+"Authentication failed — sign in again" = "Innloggingen mislyktes — logg inn på nytt";
+"Not supported by this car: %@" = "Støttes ikke av denne bilen: %@";
+"Too many requests — Volvo is rate limiting" = "For mange forespørsler — Volvo begrenser";
 "Not configured — open Settings" = "Ikke konfigurert — åpne Innstillinger";
 "Check for Updates…" = "Se etter oppdateringer…";
 "Check automatically" = "Søk automatisk";

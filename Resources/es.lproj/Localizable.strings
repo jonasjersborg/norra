@@ -69,8 +69,10 @@
 "Couldn't save password to Keychain" = "No se pudo guardar la contraseña en el llavero";
 "HTTP error: %@" = "Error HTTP: %@";
 "Parse error: %@" = "Error de análisis: %@";
-"Authentication failed — check email/password" = "Error de autenticación — comprueba el correo y la contraseña";
 "Session expired — signing in again" = "Sesión caducada — iniciando sesión de nuevo";
+"Authentication failed — sign in again" = "Error de autenticación — vuelve a iniciar sesión";
+"Not supported by this car: %@" = "No compatible con este coche: %@";
+"Too many requests — Volvo is rate limiting" = "Demasiadas solicitudes — Volvo está limitando";
 "Not configured — open Settings" = "Sin configurar — abre los Ajustes";
 "Check for Updates…" = "Buscar actualizaciones…";
 "Check automatically" = "Buscar automáticamente";
