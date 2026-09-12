@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Norra — Your Polestar, in the menu bar</title>
-<meta name="description" content="Norra is a tiny native macOS menu bar app for monitoring your Polestar: battery, range, and charging status. Open source, MIT licensed.">
+<title>Norra — Your Volvo, in the menu bar</title>
+<meta name="description" content="Norra is a tiny native macOS menu bar app for monitoring your Volvo: battery, range, and charging status. Open source, MIT licensed.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230A0A0A'/%3E%3Cpath d='M32 12c1 15 4 17 15 20-11 3-14 5-15 20-1-15-4-17-15-20 11-3 14-5 15-20z' fill='%23F5F2EC'/%3E%3Ccircle cx='45' cy='46' r='4' fill='%23FF4D00'/%3E%3C/svg%3E">
 <script>
   // Inline and blocking on purpose: a stored theme has to be on <html>
@@ -27,7 +27,7 @@
     --dim:rgba(20,20,20,.55);
     --line:rgba(20,20,20,.14);
     --panel:#F6F5F3;
-    --accent:#FF4D00;
+    --accent:#0b2ded;
     /* The bar over the scrolled page is frosted paper, not a flat fill —
        tokenised because it inverts with the theme while the glass over the
        photograph does not. */
@@ -64,7 +64,7 @@
     --dim:rgba(242,240,237,.56);
     --line:rgba(242,240,237,.14);
     --panel:#1C1C1E;
-    --accent:#FF5F22;
+    --accent:#3354ff;
     --glass:rgba(26,26,28,.72);
     --wordmark:rgba(242,240,237,.085);
     --sheet:rgba(22,22,24,.92);
@@ -80,7 +80,7 @@
       --dim:rgba(242,240,237,.56);
       --line:rgba(242,240,237,.14);
       --panel:#1C1C1E;
-      --accent:#FF5F22;
+      --accent:#3354ff;
       --glass:rgba(26,26,28,.72);
       --wordmark:rgba(242,240,237,.085);
       --sheet:rgba(22,22,24,.92);
@@ -103,7 +103,7 @@
 
   .kicker{font-size:.95rem;color:var(--dim)}
 
-  /* header — sticky, Polestar-style. Over the hero photograph it is
+  /* header — sticky. Over the hero photograph it is
      transparent with inverted (white) marks; once the hero has scrolled
      past it turns into the solid white bar with a hairline. The .scrolled
      class is driven from JS off the hero's height, not a fixed offset, so
@@ -461,9 +461,9 @@
   }
   .panel .greet{font-weight:600;font-size:.95rem;padding:.4rem .6rem .1rem}
   .panel img.car{display:block;width:100%;height:auto;padding:.2rem .5rem;box-sizing:border-box}
-  /* The Polestar 2 renders face right, the Polestar 4 faces left —
+  /* Kept for any future render that faces the wrong way —
      mirror the 2 so every car points the same way. */
-  img[src*="polestar-2-"]{transform:scaleX(-1)}
+  
   .panel .model{font-weight:600;font-size:.95rem;padding:.3rem .6rem .15rem}
   .panel .row{
     display:flex;justify-content:space-between;gap:1rem;
@@ -716,18 +716,6 @@
   /* Install methods. Same pill switcher as the menu-state tabs, but left
      aligned above the steps — each method gets its own numbered list, since
      what you do second depends on what you chose first. */
-  .ways{
-    position:relative;display:flex;gap:2px;margin:0 0 1.6rem;width:fit-content;
-    background:var(--panel);border-radius:999px;padding:3px;
-  }
-  .ways button{
-    position:relative;z-index:1;
-    appearance:none;border:0;background:transparent;color:var(--dim);
-    font:inherit;font-size:.82rem;padding:.42rem 1rem;border-radius:999px;
-    cursor:pointer;transition:color .2s;white-space:nowrap;
-  }
-  .ways button:hover{color:var(--ink)}
-  .ways button[aria-selected="true"]{color:#fff}
 
   /* One pill that slides between the options instead of the selected
      option lighting up in place: the selection is a single object moving
@@ -971,8 +959,8 @@
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.2M12 19.4v2.2M4.2 12H2M22 12h-2.2M6.05 6.05L4.5 4.5M19.5 19.5l-1.55-1.55M17.95 6.05L19.5 4.5M4.5 19.5l1.55-1.55"/></svg>
         <span class="theme-label">Appearance</span>
       </button>
-      <a class="nav-dl" id="navDownload" href="https://github.com/jonasjersborg/norra/releases/latest/download/Norra.dmg">
-        Download
+      <a class="nav-dl" id="navDownload" href="#get">
+            Build it
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>
       </a>
     </nav>
@@ -989,20 +977,20 @@
            The landscape crops lose the car entirely on a phone, so narrow
            screens get a portrait frame instead. -->
       <picture class="shot shot-light">
-        <source media="(max-width:900px)" srcset="assets/hero-light-mobile.jpg" width="1374" height="2060">
-        <img src="assets/hero-light.jpg" alt="Close crop of the rear light bar and badge of a white Polestar 2" width="2940" height="1960" fetchpriority="high">
+        <source media="(max-width:900px)" srcset="assets/hero-volvo-light-mobile.jpg">
+        <img src="assets/hero-volvo-light.jpg" alt="Close crop of the rear wing and chrome VOLVO badge of a yellow Volvo" width="2940" height="1960" fetchpriority="high">
       </picture>
       <picture class="shot shot-dark">
-        <source media="(max-width:900px)" srcset="assets/hero-polestar-mobile.jpg" width="1374" height="2060">
-        <img src="assets/hero-polestar.jpg" alt="Close crop of the nose and emblem of a silver Polestar" width="2940" height="1960" fetchpriority="high">
+        <source media="(max-width:900px)" srcset="assets/hero-volvo-mobile.jpg">
+        <img src="assets/hero-volvo.jpg" alt="Close crop of a rain-beaded Volvo iron mark on a dark grille" width="2940" height="1960" fetchpriority="high">
       </picture>
     </div>
 
     <div class="hero-inner">
       <div class="hero-copy">
         <img class="appicon" src="assets/app-icon.png" alt="Norra app icon" width="1024" height="1024">
-        <div class="kicker">A native macOS app · for your Polestar</div>
-        <h1>Your Polestar.<br><em>In the menu bar.</em></h1>
+        <div class="kicker">A native macOS app · for your Volvo</div>
+        <h1>Your Volvo.<br><em>In the menu bar.</em></h1>
         <p class="lede">Battery, range and charging status — always one glance away.
         It taps you on the shoulder when charging finishes, and stays out of the way
         the rest of the time.</p>
@@ -1011,11 +999,11 @@
       <div class="hero-card">
         <h2>Norra</h2>
         <div class="meta">Free &amp; open source · macOS 13+ · Apple silicon &amp; Intel</div>
-        <p>Signs in with your Polestar account, keeps the session in the
-        Keychain, and talks to nothing but Polestar's own API.</p>
+        <p>Signs in with Volvo ID in your browser, keeps the session in the
+        Keychain, and talks to nothing but Volvo's own API.</p>
         <div class="cta-row" id="ctaRow">
-          <a class="btn" id="ctaDownload" href="https://github.com/jonasjersborg/norra/releases/latest/download/Norra.dmg">
-            Download for macOS
+          <a class="btn" id="ctaDownload" href="#get">
+              Build it for macOS
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>
           </a>
         </div>
@@ -1033,7 +1021,7 @@
       <div class="stat"><span>Refresh while charging</span><b>60 s</b>
         <p>Once you plug in, Norra checks every minute so the numbers keep up.</p></div>
       <div class="stat"><span>Trackers and third parties</span><b>0</b>
-        <p>Your data travels between your Mac and Polestar — nowhere else.</p></div>
+        <p>Your data travels between your Mac and Volvo — nowhere else.</p></div>
     </div>
     </div>
   </section>
@@ -1044,7 +1032,7 @@
         <div class="side rv">
           <div class="kicker">The real thing</div>
           <h2>No concept shots. This is the menu.</h2>
-          <p>Every row is rendered by the app from the live Polestar API —
+          <p>Every row is rendered by the app from the live Volvo API —
           battery, range, charging state, odometer and service data, topped by a
           studio image of <b>your exact car</b>. Click the plate or VIN to copy them.</p>
           <p>Keep scrolling and the menu moves through the states it actually
@@ -1097,8 +1085,7 @@
           </div>
           <div class="panel" id="panel">
               <div class="greet">Hi, Simon</div>
-              <img class="car" id="panelCar" src="assets/polestar-4-snow.png" alt="Studio side profile of a Polestar" width="1400" height="787" loading="lazy">
-              <div class="model">Polestar 4 · 2025</div>
+              <div class="model">Volvo EX30 · 2025</div>
               <div class="row"><span class="k">Plate</span><span>CX 41 927</span></div>
               <div class="row"><span class="k">VIN</span><span>LPSVSESEKML123456</span></div>
               <hr>
@@ -1176,7 +1163,7 @@
           <div class="wg" id="wCard" data-size="s">
 
             <div class="wc wc-s">
-              <div class="wg-model">Polestar 4</div>
+              <div class="wg-model">Volvo EX30</div>
               <div class="wg-pct">77%</div>
               <div class="wg-bar"><i style="width:77%"></i></div>
               <div class="wg-range">381 km</div>
@@ -1187,9 +1174,8 @@
             </div>
 
             <div class="wc wc-m">
-              <img class="wg-car" src="assets/polestar-4-snow.png" alt="Studio side profile of a Polestar" width="1400" height="787" loading="lazy">
               <div class="wg-col">
-                <div class="wg-title">Polestar 4 · 2025</div>
+                <div class="wg-title">Volvo EX30 · 2025</div>
                 <div class="wg-figs">
                   <span class="wg-pct">77%</span>
                   <span class="wg-range">381 km</span>
@@ -1205,12 +1191,11 @@
             <div class="wc wc-l">
               <div class="wg-head">
                 <div>
-                  <div class="wg-title">Polestar 4 · 2025</div>
+                  <div class="wg-title">Volvo EX30 · 2025</div>
                   <div class="wg-plate">CX 41 927</div>
                 </div>
                 <span class="wg-state"><svg class="wg-ico" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.3" y="1.3" width="13.4" height="13.4" rx="3.4" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M6.2 11.6V4.6h2.4a2.1 2.1 0 0 1 0 4.2H6.2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Idle</span>
               </div>
-              <img class="wg-car" src="assets/polestar-4-snow.png" alt="Studio side profile of a Polestar" width="1400" height="787" loading="lazy">
               <div class="wg-figs">
                 <span class="wg-pct">77%</span>
                 <span class="wg-range">381 km</span>
@@ -1249,9 +1234,9 @@
       </div>
       <div class="cell">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        <h3>Keychain, not plaintext</h3>
-        <p>Password and session live in the macOS Keychain. Once signed in,
-        Norra resumes its session without logging in again.</p>
+        <h3>No password to store</h3>
+          <p>You sign in on Volvo's own site; Norra only ever holds the token
+            it gets back, in the macOS Keychain, and resumes with it.</p>
       </div>
       <div class="cell">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4.9 12.5H11L9.9 22 19 10.5h-6.2z"/></svg>
@@ -1261,10 +1246,9 @@
       </div>
       <div class="cell">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
-        <h3>Stays current</h3>
-        <p>Norra updates itself. New versions arrive over a signed
-        appcast — Sparkle refuses anything whose signature doesn't match —
-        and you install with one click. Turn it off in Settings.</p>
+        <h3>Lock and unlock</h3>
+          <p>Lock, unlock, honk and flash from the menu — if you grant those
+            scopes at sign-in. Off by default, and unlock asks first.</p>
       </div>
       <div class="cell">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6M12 19h8"/></svg>
@@ -1278,68 +1262,43 @@
   <section class="car-band rv">
     <div class="stage">
       <div class="wordmark" aria-hidden="true"><div class="mq" id="carWord"></div></div>
-      <img class="car-light" src="assets/polestar-4-magnesium.png" alt="Studio side profile of a Polestar" width="1400" height="787" loading="lazy">
     </div>
     <p>The studio render of your exact configuration — paint, wheels and all —<br>
-    fetched straight from Polestar and shown at the top of the menu.</p>
+    fetched straight from Volvo and shown at the top of the menu.</p>
   </section>
 
   <section class="get" id="get">
-    <div class="side rv">
-      <div class="kicker">Get started</div>
-      <h2>Running in a minute.</h2>
-      <p>Every release is a finished app that opens like any other. Drag it
-      to Applications, sign in with your Polestar account, and Norra is in
-      the menu bar.</p>
-    </div>
-    <div class="rv">
-      <div class="ways" role="tablist" aria-label="Install method">
-        <button type="button" role="tab" id="way-dmg" aria-controls="pane-dmg" aria-selected="true">Download</button>
-        <button type="button" role="tab" id="way-brew" aria-controls="pane-brew" aria-selected="false">Homebrew</button>
-        <button type="button" role="tab" id="way-src" aria-controls="pane-src" aria-selected="false">Source</button>
+      <div class="side rv">
+        <div class="kicker">Get started</div>
+        <h2>Build it yourself.</h2>
+        <p>Norra talks to Volvo's official API, which means credentials —
+          and Volvo issues those per application, to you. So there is no
+          download: you register once, build once, and it is yours.</p>
       </div>
 
-      <div class="way" id="pane-dmg" role="tabpanel" aria-labelledby="way-dmg">
-        <ol class="steps">
-          <li><b>Download</b> — the disk image from the latest release.
-            <a class="dl" href="https://github.com/jonasjersborg/norra/releases/latest/download/Norra.dmg">Norra.dmg</a></li>
-          <li><b>Install</b> — open it, drag Norra to Applications, launch it.</li>
-          <li><b>Sign in</b> — email, password and your car's VIN.</li>
-        </ol>
+      <div class="rv">
+        <div class="way">
+          <ol class="steps">
+            <li><b>Register</b> — create an application at
+              <a href="https://developer.volvocars.com/account/">developer.volvocars.com</a>
+              and set its redirect URI to <code>http://localhost:9631/callback</code>.
+              <span class="note">Free for non-commercial use. The API key is
+              issued at once; the client ID follows Volvo's review.</span></li>
+            <li><b>Build</b> — clone it and run one make target.
+              <div class="cmd">
+                <code>git clone https://github.com/jonasjersborg/norra &amp;&amp; cd norra &amp;&amp; make app</code>
+                <button type="button" data-copy>Copy</button>
+              </div>
+              <span class="note">Needs macOS 13+ and the Xcode Command Line Tools
+              (<code>xcode-select --install</code>).</span></li>
+            <li><b>Sign in</b> — paste your key, enter the VIN, and approve
+              Norra in the browser window Volvo opens.
+              <span class="note">The VIN is in the Volvo Cars app under your
+              car's details, and on the registration papers.</span></li>
+          </ol>
+        </div>
       </div>
-
-      <div class="way" id="pane-brew" role="tabpanel" aria-labelledby="way-brew" hidden>
-        <ol class="steps">
-          <li><b>Install</b> — one command; the tap is added for you.
-            <div class="cmd">
-              <code>brew install --cask jonasjersborg/norra/norra</code>
-              <button type="button" data-copy>Copy</button>
-            </div></li>
-          <li><b>Launch</b> — Norra lands in Applications like any other cask.</li>
-          <li><b>Sign in</b> — email, password and your car's VIN.</li>
-        </ol>
-      </div>
-
-      <div class="way" id="pane-src" role="tabpanel" aria-labelledby="way-src" hidden>
-        <ol class="steps">
-          <li><b>Build</b> — clone it and run one make target.
-            <div class="cmd">
-              <code>git clone https://github.com/jonasjersborg/norra &amp;&amp; cd norra &amp;&amp; make app</code>
-              <button type="button" data-copy>Copy</button>
-            </div>
-            <span class="note">Needs macOS 13+ and the Xcode Command Line Tools
-            (<code>xcode-select --install</code>).</span></li>
-          <li><b>Launch</b> — <code>open Norra.app</code>, or move it to Applications first.
-            <span class="note">A local build isn't notarized, so the first
-            launch wants a right-click → Open.</span></li>
-          <li><b>Sign in</b> — email, password and your car's VIN.
-            <span class="note">The VIN is in the Polestar app under your car's
-            details, if it isn't on hand. Norra keeps itself up to date from
-            here.</span></li>
-        </ol>
-      </div>
-    </div>
-  </section>
+    </section>
 
   <!-- What the install steps used to carry as small print. The answers are
        the same; a question only costs the reader who has it. -->
@@ -1351,39 +1310,38 @@
     <div class="rv">
       <details>
         <summary>Will my Mac warn me when I open it?</summary>
-        <p>No. Apple has checked and approved every release, so Norra opens
-        straight away like anything from the App Store. Building it yourself
-        from source is the one exception — that first launch wants a
-        right-click → Open.</p>
+          <p>The first launch wants a right-click → Open, because you built
+            it yourself rather than downloading a notarized copy. After that
+            it opens like anything else.</p>
       </details>
       <details>
         <summary>Where do I find my VIN?</summary>
-        <p>In the Polestar app, under your car's details. It's also on the
+        <p>In the Volvo Cars app, under your car's details. It's also on the
         registration papers, and stamped in the corner of the windscreen on
         the driver's side.</p>
       </details>
       <details>
-        <summary>Where do my Polestar details go?</summary>
-        <p>Your password goes into your Mac's keychain and to Polestar when
-        Norra signs in — nowhere else. There's no Norra account and
-        nothing in between: the app talks to Polestar directly, from your
-        machine.</p>
+        <summary>Where do my Volvo details go?</summary>
+        <p>Nowhere but your own Mac. You sign in through your browser on
+        Volvo's own site, so Norra never sees your password — only the
+        token Volvo hands back, which lives in your keychain. There's no
+        Norra account and nothing in between.</p>
       </details>
       <details>
-        <summary>How does it stay up to date?</summary>
-        <p>Norra looks for new versions on its own and offers them when they
-        land. You never have to come back here for a newer copy.</p>
+        <summary>How do I update it?</summary>
+          <p><code>git pull &amp;&amp; make app</code>. There is no in-app
+            updater — you built it, so you update it the same way.</p>
       </details>
     </div>
   </section>
 
   <footer>
     <div>Norra<span style="color:var(--accent)">.</span> — MIT licensed.
-      Not affiliated with Polestar.</div>
+      Not affiliated with Volvo.</div>
     <div class="footer-right">
       <div>
         <a href="https://github.com/jonasjersborg/norra">GitHub</a> ·
-        <a href="https://unsplash.com/photos/hyvUS_Bs0Rs">Hero photos via Unsplash</a>
+        <a href="https://unsplash.com/photos/8xMGS4Ab6U0">Hero photos by Aaron Doucett &amp; Tyler B on Unsplash</a>
       </div>
       <a class="donate" href="https://www.paypal.com/donate/?hosted_button_id=U6P5Y4A5ZHHVY">Donate</a>
     </div>
@@ -1391,31 +1349,22 @@
 </div>
 
 <script>
-  // A different Polestar each visit. Polestar 3 joins when a valid
-  // configuration for the image API turns up.
-  const cars = [
-    {name: 'Polestar 2', model: 'Polestar 2 · 2024', light: 'assets/polestar-2-thunder.png', dark: 'assets/polestar-2-snow.png'},
-    {name: 'Polestar 4', model: 'Polestar 4 · 2025', light: 'assets/polestar-4-magnesium.png', dark: 'assets/polestar-4-snow.png'},
-  ];
-  const car = cars[Math.floor(Math.random() * cars.length)];
-  document.querySelectorAll('img.car-light').forEach(img => img.src = car.light);
-  // The mock menu is always dark, so it always gets the light-paint render.
-  document.getElementById('panelCar').src = car.dark;
-  // The widget cards are dark too, so they take the same light-painted car.
-  document.querySelectorAll('img.wg-car').forEach(img => img.src = car.dark);
-  document.querySelector('.panel .model').textContent = car.model;
-  // Without the year: behind the render it reads as a wordmark, not a spec.
+  // No studio renders here. Norra shows the picture of your actual car,
+  // fetched from Volvo at runtime — there is nothing static to ship that
+  // would be truer than the real thing. The band behind it just says the
+  // make, since the model is whichever one you own.
+  const carName = 'Volvo';
   // The strip is filled with as many copies as the viewport needs plus one,
   // and scroll slides it by whole copies — so the seam never arrives.
   const mq = document.getElementById('carWord');
   const mqStill = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function fillMarquee() {
-    mq.innerHTML = '<span>' + car.name + '</span>';
+    mq.innerHTML = '<span>' + carName + '</span>';
     const one = mq.scrollWidth;
     if (!one) return 0;
     const need = Math.ceil((window.innerWidth + one) / one) + 1;
-    mq.innerHTML = ('<span>' + car.name + '</span>').repeat(need);
+    mq.innerHTML = ('<span>' + carName + '</span>').repeat(need);
     return one;
   }
 
@@ -1668,19 +1617,8 @@
   renderSize(0);
   driveSizes();
 
-  // Install methods. The panes are in the markup rather than built here, so
-  // the commands are still readable — and copyable — with JS off.
-  const ways = [...document.querySelectorAll('.ways button')];
-  const moveWayPill = pillFor(document.querySelector('.ways'));
-  moveWayPill();
-  ways.forEach(tab => tab.addEventListener('click', () => {
-    ways.forEach(other => {
-      const selected = other === tab;
-      other.setAttribute('aria-selected', String(selected));
-      document.getElementById(other.getAttribute('aria-controls')).hidden = !selected;
-    });
-    moveWayPill();
-  }));
+  // There is only one way to install Norra now — build it — so the tab
+  // strip that used to switch between download, Homebrew and source is gone.
 
   // Norra is a Mac app, so on anything else the download button is a dead
   // end. iPadOS reports itself as a Mac, so touch support settles that case.
@@ -1711,7 +1649,7 @@
     share.addEventListener('click', async () => {
       try {
         if (navigator.share) {
-          await navigator.share({title: 'Norra — your Polestar in the menu bar', url: pageURL});
+          await navigator.share({title: 'Norra — your Volvo in the menu bar', url: pageURL});
         } else {
           await navigator.clipboard.writeText(pageURL);
           share.textContent = 'Link copied';
