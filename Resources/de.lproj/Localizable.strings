@@ -137,7 +137,8 @@
 "You can close this tab and return to Norra." = "Du kannst diesen Tab schließen und zu Norra zurückkehren.";
 "Norra didn't receive an authorization code. Try again from Settings." = "Norra hat keinen Autorisierungscode erhalten. Versuche es erneut über die Einstellungen.";
 "Timed out waiting for Volvo to redirect back" = "Zeitüberschreitung beim Warten auf Volvo";
-"Port %d is in use — close whatever is using it and try again" = "Port %d ist belegt — schließe das Programm, das ihn verwendet, und versuche es erneut";
+"Couldn't listen on port %d: %@" = "Port %d konnte nicht abgehört werden: %@";
+"another program is using it" = "ein anderes Programm verwendet ihn";
 "Application key" = "Anwendungsschlüssel";
 "Client ID" = "Client-ID";
 "Volvo application key" = "Volvo-Anwendungsschlüssel";

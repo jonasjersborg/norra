@@ -24,23 +24,48 @@ final class OnboardingWindowController: NSWindowController, NSWindowDelegate {
 
     // MARK: Brand
 
-    /// The website's accent, per light/dark variant in docs/index.html.
-    static let accent = NSColor(name: nil) { appearance in
-        appearance.isDark ? NSColor(srgbRed: 1.00, green: 0.37, blue: 0.13, alpha: 1)
-                          : NSColor(srgbRed: 1.00, green: 0.30, blue: 0.00, alpha: 1)
+    /// Volvo's own colour tokens, taken from `@volvo-cars/css` — the package
+    /// their web properties are built on — rather than eyeballed from a
+    /// screenshot. Each is named for the token it comes from, so a future
+    /// version of that package can be diffed against this list.
+    ///
+    /// Polaris drew these from Polestar's site: an orange accent on warm
+    /// off-white. Volvo's is a blue accent on true white, and the dark theme
+    /// lightens the blue rather than reusing the light one, which is why both
+    /// variants are spelled out.
+    private enum Brand {
+        /// --v-color-surface-accent-blue. The one colour anyone would
+        /// recognise as Volvo's.
+        static let accentLight = NSColor(srgbRed: 0x0b / 255, green: 0x2d / 255, blue: 0xed / 255, alpha: 1)
+        static let accentDark = NSColor(srgbRed: 0x33 / 255, green: 0x54 / 255, blue: 0xff / 255, alpha: 1)
+        /// --v-color-background-secondary.
+        static let panelLight = NSColor(srgbRed: 0xfa / 255, green: 0xfa / 255, blue: 0xfa / 255, alpha: 1)
+        static let panelDark = NSColor(srgbRed: 0x17 / 255, green: 0x17 / 255, blue: 0x17 / 255, alpha: 1)
+        /// --v-color-surface-feedback-red / --v-color-foreground-feedback-red.
+        static let dangerLight = NSColor(srgbRed: 0xcd / 255, green: 0x23 / 255, blue: 0x14 / 255, alpha: 1)
+        static let dangerDark = NSColor(srgbRed: 0xef / 255, green: 0x66 / 255, blue: 0x58 / 255, alpha: 1)
     }
-    /// --panel: the flat fill behind car rows and the menu bar preview.
+
+    static let accent = NSColor(name: nil) { appearance in
+        appearance.isDark ? Brand.accentDark : Brand.accentLight
+    }
+    /// The flat fill behind car rows and the menu bar preview.
     static let panel = NSColor(name: nil) { appearance in
-        appearance.isDark ? NSColor(srgbRed: 0.11, green: 0.11, blue: 0.12, alpha: 1)
-                          : NSColor(srgbRed: 0.96, green: 0.96, blue: 0.95, alpha: 1)
+        appearance.isDark ? Brand.panelDark : Brand.panelLight
     }
     private static let hairline = NSColor(name: nil) { appearance in
-        appearance.isDark ? NSColor(white: 1, alpha: 0.14) : NSColor(white: 0.08, alpha: 0.14)
+        // --v-color-ornament-primary is #0000001f; the inverted form is the
+        // same alpha on white.
+        appearance.isDark ? NSColor(white: 1, alpha: 0.12) : NSColor(white: 0, alpha: 0.12)
     }
-    private static let danger = NSColor(srgbRed: 0.77, green: 0.17, blue: 0.00, alpha: 1)
+    /// Red has to lighten in dark mode too — Volvo's #cd2314 on black fails
+    /// contrast, which is why they ship a second value for it.
+    private static let danger = NSColor(name: nil) { appearance in
+        appearance.isDark ? Brand.dangerDark : Brand.dangerLight
+    }
     static let hairlineColor = hairline
-    /// The site rounds everything at 2 px. Cheap to state once.
-    private static let radius: CGFloat = 2
+    /// Volvo's UI rounds at 4 px, a touch softer than Polestar's 2.
+    private static let radius: CGFloat = 4
 
     // MARK: State
 
