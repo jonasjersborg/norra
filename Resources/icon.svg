@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#12183a"/>
+      <stop offset="1" stop-color="#080b1d"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="46%" r="42%">
+      <stop offset="0"   stop-color="#3354ff" stop-opacity=".42"/>
+      <stop offset="0.55" stop-color="#0b2ded" stop-opacity=".12"/>
+      <stop offset="1"   stop-color="#0b2ded" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="star" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#cfe0ff"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1024" height="1024" rx="228" fill="url(#bg)"/>
+  <circle cx="512" cy="470" r="430" fill="url(#glow)"/>
+
+  <!-- The latitude ring: a compass rose, and the horizon Polaris sits above. -->
+  <circle cx="512" cy="470" r="250" fill="none" stroke="#3354ff" stroke-opacity=".30" stroke-width="6"/>
+
+  <!-- Eight-point star. Four long arms on the cardinals, four short between:
+       a compass rose rather than Polestar's plain four-point mark. -->
+  <g transform="translate(512 470)">
+    <path fill="url(#star)" d="
+      M 0 -300 C 16 -150 30 -58 96 -36 L 300 0 L 96 36
+      C 30 58 16 150 0 300 C -16 150 -30 58 -96 36 L -300 0 L -96 -36
+      C -30 -58 -16 -150 0 -300 Z"/>
+    <path fill="#7ea6ff" fill-opacity=".55" transform="rotate(45)" d="
+      M 0 -205 C 6 -96 12 -30 30 -14 L 205 0 L 30 14
+      C 12 30 6 96 0 205 C -6 96 -12 30 -30 14 L -205 0 L -30 -14
+      C -12 -30 -6 -96 0 -205 Z"/>
+  </g>
+
+  <!-- The three bars of a menu bar: what this app actually is. -->
+  <g fill="#ffffff" fill-opacity=".92">
+    <rect x="392" y="846" width="240" height="18" rx="9"/>
+    <rect x="430" y="890" width="164" height="18" rx="9" fill-opacity=".55"/>
+  </g>
+</svg>
