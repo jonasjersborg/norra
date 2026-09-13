@@ -150,3 +150,16 @@
 "Unlock the car?" = "Fahrzeug entriegeln?";
 "The car will be unlocked immediately." = "Das Fahrzeug wird sofort entriegelt.";
 "%@ failed: %@" = "%@ fehlgeschlagen: %@";
+"Charge to" = "Laden bis";
+"Paint" = "Lack";
+"Doors" = "Türen";
+"Locked" = "Verriegelt";
+"Unlocked" = "Entriegelt";
+"Front left" = "Vorne links";
+"Front right" = "Vorne rechts";
+"Rear left" = "Hinten links";
+"Rear right" = "Hinten rechts";
+"LOW" = "Niedrig";
+"HIGH" = "Hoch";
+"VERY_LOW" = "Sehr niedrig";
+"VERY_HIGH" = "Sehr hoch";

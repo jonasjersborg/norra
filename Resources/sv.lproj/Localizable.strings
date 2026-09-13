@@ -150,3 +150,16 @@
 "Unlock the car?" = "Låsa upp bilen?";
 "The car will be unlocked immediately." = "Bilen låses upp omedelbart.";
 "%@ failed: %@" = "%@ misslyckades: %@";
+"Charge to" = "Ladda till";
+"Paint" = "Lack";
+"Doors" = "Dörrar";
+"Locked" = "Låst";
+"Unlocked" = "Olåst";
+"Front left" = "Vänster fram";
+"Front right" = "Höger fram";
+"Rear left" = "Vänster bak";
+"Rear right" = "Höger bak";
+"LOW" = "Lågt";
+"HIGH" = "Högt";
+"VERY_LOW" = "Mycket lågt";
+"VERY_HIGH" = "Mycket högt";

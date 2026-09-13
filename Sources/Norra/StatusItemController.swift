@@ -111,6 +111,9 @@ final class StatusItemController {
             if !title.isEmpty {
                 menu.addItem(rowItem(title, bold: true))
             }
+            if let paint = data.paintName, !paint.isEmpty {
+                menu.addItem(kvItem(L("Paint"), paint))
+            }
             if let plate = data.registrationNo, !plate.isEmpty {
                 menu.addItem(kvItem(L("Plate"), plate, copyable: true))
             }
@@ -135,7 +138,14 @@ final class StatusItemController {
             menu.addItem(.separator())
 
             // Live data
-            menu.addItem(kvItem(L("Battery"), String(format: "%.0f%%", data.batteryPercentage)))
+            // Percentage first — it is what the eye wants — with the energy
+            // behind it, since 77% of a 69 kWh pack is the number that maps
+            // onto a charge session.
+            var battery = String(format: "%.0f%%", data.batteryPercentage)
+            if let kwh = data.batteryKWh {
+                battery += String(format: " · %.0f kWh", kwh)
+            }
+            menu.addItem(kvItem(L("Battery"), battery))
             let barItem = NSMenuItem()
             barItem.view = BatteryBarView(
                 fraction: data.batteryPercentage / 100,
@@ -165,10 +175,27 @@ final class StatusItemController {
                 if let type = data.grpcExtras?.chargingType { power += " · \(type)" }
                 menu.addItem(kvItem(L("Power"), power))
             }
+            // Only worth a row when it isn't the obvious 100: a car charging
+            // to a limit you set weeks ago is the case where this explains
+            // something.
+            if let target = data.targetChargePercentage, target > 0, target < 100 {
+                menu.addItem(kvItem(L("Charge to"), String(format: "%.0f%%", target)))
+            }
             if data.isCharging, let minutes = data.estimatedChargingTimeToFullMinutes, minutes > 0 {
                 let fullAt = data.lastUpdated.addingTimeInterval(TimeInterval(minutes * 60))
                 menu.addItem(kvItem(L("Full in"),
                                     "\(Self.shortDuration(minutes: minutes)) · \(timeFormatter.string(from: fullAt))"))
+            }
+
+            // Locked or not is the one thing here you might actually act on,
+            // so it sits with the live data rather than down in the stats.
+            if let locked = data.isLocked {
+                menu.addItem(kvItem(L("Doors"), locked ? L("Locked") : L("Unlocked"),
+                                    valueWarning: !locked))
+            }
+            // Silent while every wheel is fine, which is almost always.
+            for (wheel, status) in data.tyrePressures.sorted(by: { $0.key < $1.key }) {
+                menu.addItem(rowItem("⚠︎ \(L(wheel)): \(L(status))", warning: true))
             }
 
             // Car stats

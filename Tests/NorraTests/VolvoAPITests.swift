@@ -114,7 +114,8 @@ final class VolvoStatusTests: XCTestCase {
     private static func car(status: String) -> CarData {
         CarData(batteryPercentage: 64, rangeKm: 210, chargingStatus: status,
                 estimatedChargingTimeToFullMinutes: nil, modelName: nil, modelYear: nil,
-                registrationNo: nil, vin: nil, ownerFirstName: nil, odometerMeters: nil,
+                registrationNo: nil, vin: nil, ownerFirstName: nil, batteryCapacityKWh: nil,
+                targetChargePercentage: nil, paintName: nil, isLocked: nil, tyrePressures: [:], odometerMeters: nil,
                 daysToService: nil, distanceToServiceKm: nil, serviceWarning: false,
                 fluidWarnings: [], imageData: nil, lastUpdated: Date(),
                 carReportedAt: nil, odometerReportedAt: nil, grpcExtras: nil)

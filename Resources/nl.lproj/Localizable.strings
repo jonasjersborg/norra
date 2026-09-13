@@ -150,3 +150,16 @@
 "Unlock the car?" = "Auto ontgrendelen?";
 "The car will be unlocked immediately." = "De auto wordt direct ontgrendeld.";
 "%@ failed: %@" = "%@ mislukt: %@";
+"Charge to" = "Laden tot";
+"Paint" = "Lak";
+"Doors" = "Deuren";
+"Locked" = "Vergrendeld";
+"Unlocked" = "Ontgrendeld";
+"Front left" = "Linksvoor";
+"Front right" = "Rechtsvoor";
+"Rear left" = "Linksachter";
+"Rear right" = "Rechtsachter";
+"LOW" = "Laag";
+"HIGH" = "Hoog";
+"VERY_LOW" = "Zeer laag";
+"VERY_HIGH" = "Zeer hoog";

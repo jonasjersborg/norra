@@ -150,3 +150,16 @@
 "Unlock the car?" = "Odblokować samochód?";
 "The car will be unlocked immediately." = "Samochód zostanie natychmiast odblokowany.";
 "%@ failed: %@" = "%@ nie powiodło się: %@";
+"Charge to" = "Ładuj do";
+"Paint" = "Lakier";
+"Doors" = "Drzwi";
+"Locked" = "Zamknięte";
+"Unlocked" = "Otwarte";
+"Front left" = "Przód lewy";
+"Front right" = "Przód prawy";
+"Rear left" = "Tył lewy";
+"Rear right" = "Tył prawy";
+"LOW" = "Niskie";
+"HIGH" = "Wysokie";
+"VERY_LOW" = "Bardzo niskie";
+"VERY_HIGH" = "Bardzo wysokie";

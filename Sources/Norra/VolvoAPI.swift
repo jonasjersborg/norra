@@ -54,9 +54,18 @@ final class VolvoAPI {
         "energy:capability:read",
         "conve:vehicle_relation",
         "conve:odometer_status",
-        "conve:diagnostics_engine_status",
+        // The service interval lives behind diagnostics_workshop, not
+        // diagnostics_engine_status — that one is granted happily and the
+        // endpoint still answers 403. Checked against a real token.
+        "conve:diagnostics_workshop",
         "conve:brake_status",
-        "conve:warnings"
+        "conve:warnings",
+        "conve:lock_status",
+        "conve:tyre_status",
+        "conve:trip_statistics",
+        "conve:doors_status",
+        "conve:windows_status",
+        "conve:connectivity_status"
     ]
 
     /// Requested only when the user turns commands on in Settings. Kept apart
@@ -84,6 +93,11 @@ final class VolvoAPI {
     /// endpoint. The EX30 reports no target-charge-level; asking for it
     /// anyway earns a 404 every poll, forever.
     private(set) var capabilities: Set<String> = []
+
+    /// The studio render, fetched once per car and kept. It is a static
+    /// picture of a configuration that cannot change, so re-downloading it
+    /// every five minutes would be pure waste.
+    private var carImage: Data?
 
     private let session: URLSession
     private let credentials: VolvoCredentials
@@ -320,6 +334,24 @@ final class VolvoAPI {
         }
 
         await loadCapabilities(vin: vin)
+        await loadCarImage()
+    }
+
+    /// Volvo serves the render from its own image host, unauthenticated, so
+    /// this is a plain GET. Failure is silent: a menu without a picture of
+    /// the car is still a working menu.
+    private func loadCarImage() async {
+        carImage = nil
+        guard let url = vehicle?.exteriorImageURL else { return }
+        do {
+            let (data, response) = try await session.data(from: url)
+            guard let http = response as? HTTPURLResponse,
+                  (200..<300).contains(http.statusCode), !data.isEmpty else { return }
+            carImage = data
+            debugLog("car image: \(data.count) bytes")
+        } catch {
+            debugLog("car image unavailable: \(error)")
+        }
     }
 
     private func loadCarList() async {
@@ -365,10 +397,20 @@ final class VolvoAPI {
         async let odometerFields = try? getFields("\(connectedPath)/\(vin)/odometer")
         async let diagnosticFields = try? getFields("\(connectedPath)/\(vin)/diagnostics")
         async let warningFields = try? getFields("\(connectedPath)/\(vin)/warnings")
+        async let engineFields = try? getFields("\(connectedPath)/\(vin)/engine")
+        async let brakeFields = try? getFields("\(connectedPath)/\(vin)/brakes")
+        async let tyreFields = try? getFields("\(connectedPath)/\(vin)/tyres")
+        async let doorFields = try? getFields("\(connectedPath)/\(vin)/doors")
 
         let odometer = await odometerFields ?? [:]
         let diagnostics = await diagnosticFields ?? [:]
-        let warnings = await warningFields ?? [:]
+        // Fluids and bulbs are spread across three endpoints rather than one,
+        // and each is allowed to 403 on its own when a scope is missing.
+        let warnings = (await warningFields ?? [:])
+            .merging(await engineFields ?? [:]) { a, _ in a }
+            .merging(await brakeFields ?? [:]) { a, _ in a }
+        let tyres = await tyreFields ?? [:]
+        let doors = await doorFields ?? [:]
 
         // These names are what the API actually sends, which is not what the
         // published specification documents — it calls them
@@ -420,6 +462,11 @@ final class VolvoAPI {
             registrationNo: nil,
             vin: vin,
             ownerFirstName: nil,
+            batteryCapacityKWh: vehicle?.batteryCapacityKWh,
+            targetChargePercentage: energy["targetBatteryChargeLevel"]?.doubleValue,
+            paintName: vehicle?.externalColour,
+            isLocked: Self.lockState(doors),
+            tyrePressures: Self.tyrePressures(tyres),
             // The connected-vehicle odometer is in kilometres, while CarData
             // holds metres — the drive detection compares two readings and
             // whole kilometres would hide a car crossing town.
@@ -428,7 +475,7 @@ final class VolvoAPI {
             distanceToServiceKm: diagnostics["distanceToService"]?.intValue,
             serviceWarning: Self.serviceWarning(from: diagnostics),
             fluidWarnings: Self.fluidWarnings(from: warnings),
-            imageData: nil,
+            imageData: carImage,
             lastUpdated: Date(),
             carReportedAt: energy["batteryChargeLevel"]?.timestamp,
             odometerReportedAt: odometer["odometer"]?.timestamp,
@@ -447,6 +494,35 @@ final class VolvoAPI {
         case false: return "DISCONNECTED"
         default: return nil
         }
+    }
+
+    /// Whether the car is locked. Volvo reports a central lock state plus a
+    /// state per door; the central one is what a menu row should say, and
+    /// nil means the scope wasn't granted rather than "unknown state".
+    private static func lockState(_ doors: VolvoFields) -> Bool? {
+        guard let value = (doors["centralLock"] ?? doors["carLocked"])?.stringValue else { return nil }
+        switch value.uppercased() {
+        case "LOCKED": return true
+        case "UNLOCKED": return false
+        default: return nil
+        }
+    }
+
+    /// Tyre pressure per wheel, keyed the way Volvo names them. Only the
+    /// ones that aren't NORMAL are interesting — four rows saying "fine" is
+    /// four rows of noise.
+    private static func tyrePressures(_ tyres: VolvoFields) -> [String: String] {
+        let wheels = [
+            "frontLeft": "Front left", "frontRight": "Front right",
+            "rearLeft": "Rear left", "rearRight": "Rear right"
+        ]
+        var out: [String: String] = [:]
+        for (key, label) in wheels {
+            guard let status = tyres[key]?.stringValue?.uppercased() else { continue }
+            guard status != "NORMAL", status != "UNSPECIFIED" else { continue }
+            out[label] = status
+        }
+        return out
     }
 
     /// Volvo reports each fluid as its own field with a status string. Only

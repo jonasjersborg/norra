@@ -152,3 +152,16 @@
 "Unlock the car?" = "Unlock the car?";
 "The car will be unlocked immediately." = "The car will be unlocked immediately.";
 "%@ failed: %@" = "%@ failed: %@";
+"Charge to" = "Charge to";
+"Paint" = "Paint";
+"Doors" = "Doors";
+"Locked" = "Locked";
+"Unlocked" = "Unlocked";
+"Front left" = "Front left";
+"Front right" = "Front right";
+"Rear left" = "Rear left";
+"Rear right" = "Rear right";
+"LOW" = "LOW";
+"HIGH" = "HIGH";
+"VERY_LOW" = "VERY_LOW";
+"VERY_HIGH" = "VERY_HIGH";

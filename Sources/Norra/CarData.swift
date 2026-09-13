@@ -24,6 +24,25 @@ struct CarData {
     let registrationNo: String?
     let vin: String?
     let ownerFirstName: String?
+    /// Usable pack size in kWh, from the car's own description. Turns a
+    /// percentage into an amount of energy, which is the number that
+    /// actually tells you how far you can go.
+    let batteryCapacityKWh: Double?
+    /// What the car is charging toward, which is not always 100 — an EV left
+    /// on an 80% limit is charging correctly, and a menu that only said
+    /// "Charging" would leave you wondering why it stopped.
+    let targetChargePercentage: Double?
+    /// "Powder Blue". Shown under the title, where it reads as the name of
+    /// the car rather than a spec.
+    let paintName: String?
+    /// Central lock state. Nil when the scope wasn't granted — which is a
+    /// different thing from a car that didn't answer, and both are different
+    /// from "unlocked". A row that guessed here would be the worst kind of
+    /// wrong.
+    let isLocked: Bool?
+    /// Wheels whose pressure the car is unhappy about, label to status.
+    /// Empty when all four are fine, which is the normal case.
+    let tyrePressures: [String: String]
     /// Metres, as the car reports them. Kept at full resolution because the
     /// movement test below lives or dies on it: rounded to whole kilometres,
     /// a car crossing town at 25 km/h looks stationary for minutes at a time.
@@ -53,6 +72,12 @@ struct CarData {
 
     var isCharging: Bool {
         statusKey == "CHARGING" || statusKey == "SMART_CHARGING"
+    }
+
+    /// Energy in the pack right now. Nil when the car didn't say how big
+    /// its battery is — better no row than a number derived from a guess.
+    var batteryKWh: Double? {
+        batteryCapacityKWh.map { $0 * batteryPercentage / 100 }
     }
 
     /// What the menu and the widget show. Whole kilometres, the way the car's

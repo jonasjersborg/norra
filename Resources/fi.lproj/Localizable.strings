@@ -150,3 +150,16 @@
 "Unlock the car?" = "Avataanko auton lukitus?";
 "The car will be unlocked immediately." = "Auton lukitus avataan välittömästi.";
 "%@ failed: %@" = "%@ epäonnistui: %@";
+"Charge to" = "Lataa tasolle";
+"Paint" = "Väri";
+"Doors" = "Ovet";
+"Locked" = "Lukittu";
+"Unlocked" = "Lukitsematon";
+"Front left" = "Vasen etu";
+"Front right" = "Oikea etu";
+"Rear left" = "Vasen taka";
+"Rear right" = "Oikea taka";
+"LOW" = "Matala";
+"HIGH" = "Korkea";
+"VERY_LOW" = "Erittäin matala";
+"VERY_HIGH" = "Erittäin korkea";

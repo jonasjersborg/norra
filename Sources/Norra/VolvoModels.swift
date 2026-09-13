@@ -138,6 +138,10 @@ struct VolvoVehicle {
     /// decides whether range comes from the battery or the tank.
     let fuelType: String?
     let externalColour: String?
+    /// Volvo's studio render of this exact car — colour, wheels and all —
+    /// as a transparent PNG. The menu and the widget already know how to
+    /// draw it; this is where it comes from.
+    let exteriorImageURL: URL?
 
     /// "Volvo EX30 · 2025", or as much of it as the car reported.
     var title: String {
@@ -156,7 +160,15 @@ struct VolvoVehicle {
         self.vin = vin
         let descriptions = data["descriptions"] as? [String: Any]
         self.modelName = descriptions?["model"] as? String
-        self.externalColour = descriptions?["exteriorColour"] as? String ?? descriptions?["exterior"] as? String
+        // Lives at the top level, not under descriptions, whatever the
+        // specification says. Both are read: a car that follows the spec
+        // should not lose its colour over it.
+        self.externalColour = data["externalColour"] as? String
+            ?? descriptions?["exteriorColour"] as? String
+            ?? descriptions?["exterior"] as? String
+
+        let images = data["images"] as? [String: Any]
+        self.exteriorImageURL = (images?["exteriorImageUrl"] as? String).flatMap(URL.init(string:))
 
         // modelYear arrives as a number on some accounts and a string on
         // others; normalise rather than picking one and being wrong later.

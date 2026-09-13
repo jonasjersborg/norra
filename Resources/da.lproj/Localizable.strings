@@ -152,3 +152,16 @@
 "Unlock the car?" = "Lås bilen op?";
 "The car will be unlocked immediately." = "Bilen låses op med det samme.";
 "%@ failed: %@" = "%@ mislykkedes: %@";
+"Charge to" = "Oplad til";
+"Paint" = "Lak";
+"Doors" = "Døre";
+"Locked" = "Låst";
+"Unlocked" = "Ulåst";
+"Front left" = "Forreste venstre";
+"Front right" = "Forreste højre";
+"Rear left" = "Bageste venstre";
+"Rear right" = "Bageste højre";
+"LOW" = "Lavt";
+"HIGH" = "Højt";
+"VERY_LOW" = "Meget lavt";
+"VERY_HIGH" = "Meget højt";
