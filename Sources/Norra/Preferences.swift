@@ -45,7 +45,13 @@ enum RefreshInterval: Int, CaseIterable {
 }
 
 enum Preferences {
-    private static let d = UserDefaults.standard
+    /// Where settings are read and written.
+    ///
+    /// A variable rather than `UserDefaults.standard` so the tests can point
+    /// it at a scratch domain. They used to run against the real one, and
+    /// `AccountsTests.wipe()` cleared the account and VIN of whoever ran
+    /// `swift test` — a signed-in app would quietly find itself unconfigured.
+    static var d = UserDefaults.standard
 
     static var email: String {
         get { d.string(forKey: "polestar_email") ?? "" }

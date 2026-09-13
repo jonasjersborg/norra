@@ -163,3 +163,8 @@
 "HIGH" = "Alta";
 "VERY_LOW" = "Molto bassa";
 "VERY_HIGH" = "Molto alta";
+"Consumption" = "Consumo";
+"in %d month" = "tra %d mese";
+"in %d months" = "tra %d mesi";
+"in %d year" = "tra %d anno";
+"in %d years" = "tra %d anni";

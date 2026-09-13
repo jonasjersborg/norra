@@ -115,8 +115,8 @@ final class VolvoStatusTests: XCTestCase {
         CarData(batteryPercentage: 64, rangeKm: 210, chargingStatus: status,
                 estimatedChargingTimeToFullMinutes: nil, modelName: nil, modelYear: nil,
                 registrationNo: nil, vin: nil, ownerFirstName: nil, batteryCapacityKWh: nil,
-                targetChargePercentage: nil, paintName: nil, isLocked: nil, tyrePressures: [:], odometerMeters: nil,
-                daysToService: nil, distanceToServiceKm: nil, serviceWarning: false,
+                targetChargePercentage: nil, paintName: nil, isLocked: nil, tyrePressures: [:], averageConsumption: nil, odometerMeters: nil,
+                daysToService: nil, serviceIntervalUnit: nil, distanceToServiceKm: nil, serviceWarning: false,
                 fluidWarnings: [], imageData: nil, lastUpdated: Date(),
                 carReportedAt: nil, odometerReportedAt: nil, grpcExtras: nil)
     }
@@ -207,6 +207,32 @@ final class LiveEnergyShapeTests: XCTestCase {
         XCTAssertEqual(f["batteryChargeLevel"]?.doubleValue, 77)
         XCTAssertEqual(f["electricRange"]?.intValue, 274)
         XCTAssertEqual(VolvoStatus.systemStatus(f["chargingStatus"]?.stringValue), "IDLE")
+    }
+}
+
+/// Two things the first screenshot of real data got wrong.
+final class RealCarQuirkTests: XCTestCase {
+
+    /// The EX30 says NO_WARNING, not NORMAL. The tyre filter only knew
+    /// NORMAL and UNSPECIFIED, so all four wheels rendered as orange warning
+    /// rows reading "NO_WARNING".
+    func testNoWarningCountsAsFine() {
+        let fine = ["NO_WARNING", "NORMAL", "UNSPECIFIED", "OK", "NONE"]
+        for status in fine {
+            XCTAssertTrue(VolvoAPI.isFineForTesting(status),
+                          "\(status) should not raise a warning row")
+        }
+        XCTAssertFalse(VolvoAPI.isFineForTesting("LOW"))
+        XCTAssertFalse(VolvoAPI.isFineForTesting("VERY_LOW"))
+    }
+
+    /// timeToService comes back as 9 with unit "months". The field is named
+    /// daysToService — a leftover from the Polestar client — and rendering it
+    /// as days turned most of a year into an imminent-service warning.
+    func testServiceIntervalCarriesItsUnit() {
+        let field = VolvoField(["value": 9, "unit": "months", "status": "OK"])
+        XCTAssertEqual(field?.intValue, 9)
+        XCTAssertEqual(field?.unit, "months")
     }
 }
 

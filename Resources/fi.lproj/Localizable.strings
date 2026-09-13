@@ -163,3 +163,8 @@
 "HIGH" = "Korkea";
 "VERY_LOW" = "Erittäin matala";
 "VERY_HIGH" = "Erittäin korkea";
+"Consumption" = "Kulutus";
+"in %d month" = "%d kuukauden kuluttua";
+"in %d months" = "%d kuukauden kuluttua";
+"in %d year" = "%d vuoden kuluttua";
+"in %d years" = "%d vuoden kuluttua";

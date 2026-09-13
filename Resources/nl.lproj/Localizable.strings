@@ -163,3 +163,8 @@
 "HIGH" = "Hoog";
 "VERY_LOW" = "Zeer laag";
 "VERY_HIGH" = "Zeer hoog";
+"Consumption" = "Verbruik";
+"in %d month" = "over %d maand";
+"in %d months" = "over %d maanden";
+"in %d year" = "over %d jaar";
+"in %d years" = "over %d jaar";

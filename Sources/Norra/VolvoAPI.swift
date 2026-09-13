@@ -158,6 +158,17 @@ final class VolvoAPI {
     }
 
     /// Complete the flow with the `code` the redirect came back with.
+    /// Once the session exists the account is known, and the refresh token
+    /// has to be filed under it. Saving during the token exchange — before
+    /// onboarding commits the account — writes it under the unscoped name,
+    /// and a second car signing in later would then overwrite the first.
+    private func rescopeStoredToken() {
+        guard let account = cars.first?.vin, !account.isEmpty,
+              let token = refreshToken else { return }
+        if Preferences.email.isEmpty { Preferences.email = account }
+        try? Keychain.saveSessionToken(token)
+    }
+
     func authenticate(callbackURL: URL, vin: String) async throws {
         guard let code = Self.queryValue("code", from: callbackURL) else {
             // Volvo reports a declined consent as ?error= rather than a
@@ -169,6 +180,7 @@ final class VolvoAPI {
         }
         try await exchangeCodeForToken(code)
         try await loadVehicle(vin: vin)
+        rescopeStoredToken()
     }
 
     /// Resume with the refresh token in the Keychain — no browser, no consent
@@ -401,16 +413,21 @@ final class VolvoAPI {
         async let brakeFields = try? getFields("\(connectedPath)/\(vin)/brakes")
         async let tyreFields = try? getFields("\(connectedPath)/\(vin)/tyres")
         async let doorFields = try? getFields("\(connectedPath)/\(vin)/doors")
+        async let statsFields = try? getFields("\(connectedPath)/\(vin)/statistics")
 
         let odometer = await odometerFields ?? [:]
         let diagnostics = await diagnosticFields ?? [:]
+        // washerFluidLevelWarning arrives with the service interval rather
+        // than with the other warnings, whatever the grouping suggests.
         // Fluids and bulbs are spread across three endpoints rather than one,
         // and each is allowed to 403 on its own when a scope is missing.
         let warnings = (await warningFields ?? [:])
             .merging(await engineFields ?? [:]) { a, _ in a }
             .merging(await brakeFields ?? [:]) { a, _ in a }
+            .merging(diagnostics.filter { $0.key.hasSuffix("LevelWarning") }) { a, _ in a }
         let tyres = await tyreFields ?? [:]
         let doors = await doorFields ?? [:]
+        let stats = await statsFields ?? [:]
 
         // These names are what the API actually sends, which is not what the
         // published specification documents — it calls them
@@ -467,11 +484,15 @@ final class VolvoAPI {
             paintName: vehicle?.externalColour,
             isLocked: Self.lockState(doors),
             tyrePressures: Self.tyrePressures(tyres),
+            // kWh/100km. The single most useful number an EV reports that a
+            // battery percentage cannot tell you.
+            averageConsumption: stats["averageEnergyConsumptionAutomatic"]?.doubleValue,
             // The connected-vehicle odometer is in kilometres, while CarData
             // holds metres — the drive detection compares two readings and
             // whole kilometres would hide a car crossing town.
             odometerMeters: odometer["odometer"]?.doubleValue.map { Int($0 * 1000) },
             daysToService: diagnostics["timeToService"]?.intValue,
+            serviceIntervalUnit: diagnostics["timeToService"]?.unit,
             distanceToServiceKm: diagnostics["distanceToService"]?.intValue,
             serviceWarning: Self.serviceWarning(from: diagnostics),
             fluidWarnings: Self.fluidWarnings(from: warnings),
@@ -519,10 +540,21 @@ final class VolvoAPI {
         var out: [String: String] = [:]
         for (key, label) in wheels {
             guard let status = tyres[key]?.stringValue?.uppercased() else { continue }
-            guard status != "NORMAL", status != "UNSPECIFIED" else { continue }
+            guard !Self.isFine(status) else { continue }
             out[label] = status
         }
         return out
+    }
+
+    /// The several ways Volvo says "nothing wrong here". NO_WARNING is what
+    /// an EX30 actually sends; the others appear on different models and
+    /// different endpoints. Missing one means showing a warning row that
+    /// says NO_WARNING, which is exactly how this was found.
+    static func isFineForTesting(_ status: String) -> Bool { isFine(status) }
+
+    private static func isFine(_ status: String) -> Bool {
+        ["NO_WARNING", "NORMAL", "UNSPECIFIED", "OK", "NONE", "CLOSED", "LOCKED"]
+            .contains(status.uppercased())
     }
 
     /// Volvo reports each fluid as its own field with a status string. Only
@@ -536,14 +568,14 @@ final class VolvoAPI {
         ]
         return interesting.compactMap { key, label in
             guard let value = warnings[key]?.stringValue?.uppercased() else { return nil }
-            guard value != "NO_WARNING", value != "NORMAL", value != "UNSPECIFIED" else { return nil }
+            guard !Self.isFine(value) else { return nil }
             return label
         }.sorted()
     }
 
     private static func serviceWarning(from diagnostics: VolvoFields) -> Bool {
         guard let status = diagnostics["serviceWarning"]?.stringValue?.uppercased() else { return false }
-        return status != "NO_WARNING" && status != "NORMAL" && status != "UNSPECIFIED"
+        return !isFine(status)
     }
 
     // MARK: - Commands

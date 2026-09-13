@@ -165,3 +165,8 @@
 "HIGH" = "Højt";
 "VERY_LOW" = "Meget lavt";
 "VERY_HIGH" = "Meget højt";
+"Consumption" = "Forbrug";
+"in %d month" = "om %d måned";
+"in %d months" = "om %d måneder";
+"in %d year" = "om %d år";
+"in %d years" = "om %d år";

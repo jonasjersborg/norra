@@ -165,3 +165,8 @@
 "HIGH" = "HIGH";
 "VERY_LOW" = "VERY_LOW";
 "VERY_HIGH" = "VERY_HIGH";
+"Consumption" = "Consumption";
+"in %d month" = "in %d month";
+"in %d months" = "in %d months";
+"in %d year" = "in %d year";
+"in %d years" = "in %d years";

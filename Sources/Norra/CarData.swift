@@ -43,11 +43,19 @@ struct CarData {
     /// Wheels whose pressure the car is unhappy about, label to status.
     /// Empty when all four are fine, which is the normal case.
     let tyrePressures: [String: String]
+    /// kWh per 100 km, as the car computes it. Nil without the trip
+    /// statistics scope.
+    let averageConsumption: Double?
     /// Metres, as the car reports them. Kept at full resolution because the
     /// movement test below lives or dies on it: rounded to whole kilometres,
     /// a car crossing town at 25 km/h looks stationary for minutes at a time.
     let odometerMeters: Int?
     let daysToService: Int?
+    /// The unit `daysToService` is actually in. Volvo reports the service
+    /// interval in months on an EX30 and the field name is a leftover from
+    /// the Polestar client, which assumed days — so 9 months rendered as
+    /// "in 9 days", in warning orange, on a car with most of a year to go.
+    let serviceIntervalUnit: String?
     let distanceToServiceKm: Int?
     let serviceWarning: Bool
     let fluidWarnings: [String]

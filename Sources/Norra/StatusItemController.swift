@@ -200,14 +200,32 @@ final class StatusItemController {
 
             // Car stats
             var stats: [(String, String)] = []
+            if let kwh = data.averageConsumption, kwh > 0 {
+                stats.append((L("Consumption"), String(format: "%.1f kWh/100 km", kwh)))
+            }
             if let km = data.odometerKm {
                 stats.append((L("Odometer"), Self.distance(km: km, grouped: true)))
             }
             var serviceSoon = false
-            if let days = data.daysToService {
-                var service = String(format: L(days == 1 ? "in %d day" : "in %d days"), days)
+            if let interval = data.daysToService {
+                // The car says which unit it means. Months on an EX30, days
+                // on the cars this menu was first written for — reading nine
+                // months as nine days turns "plenty of time" into an orange
+                // warning row.
+                let unit = (data.serviceIntervalUnit ?? "days").lowercased()
+                let inDays = unit.hasPrefix("month") ? interval * 30
+                           : unit.hasPrefix("year") ? interval * 365
+                           : interval
+                var service: String
+                if unit.hasPrefix("month") {
+                    service = String(format: L(interval == 1 ? "in %d month" : "in %d months"), interval)
+                } else if unit.hasPrefix("year") {
+                    service = String(format: L(interval == 1 ? "in %d year" : "in %d years"), interval)
+                } else {
+                    service = String(format: L(interval == 1 ? "in %d day" : "in %d days"), interval)
+                }
                 if let km = data.distanceToServiceKm { service += " / \(Self.distance(km: km))" }
-                serviceSoon = days < 30
+                serviceSoon = inDays < 30
                 stats.append((L("Service"), service))
             }
             if !stats.isEmpty || data.serviceWarning || !data.fluidWarnings.isEmpty {
